@@ -1,0 +1,29 @@
+#
+# HDL files
+#
+#hdl:
+#
+# BD files
+#
+bd:
+  - designs/diode_BPM/bd/diode_BPM.bd
+#
+# IP repositories for the design 
+#
+ip_repo:
+  - shared/ip_repo
+#
+# project specific XDC files below 
+#
+xdc:
+  - designs/diode_BPM/xdc/diode_BPM.xdc
+#
+# Vivado target xdc file
+#
+xdcTarget: designs/diode_BPM/xdc/vivado_target.xdc
+
+#
+# Top level modle name 
+#
+topMod: diode_BPM_wrapper
+
