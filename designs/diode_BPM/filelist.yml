@@ -2,6 +2,9 @@
 # HDL files
 #
 #hdl:
+sim:
+  - designs/diode_BPM/hdl/testBench.sv
+  - designs/diode_BPM/hdl/LTC2333_digitalModel.sv
 #
 # BD files
 #
@@ -26,4 +29,4 @@ xdcTarget: designs/diode_BPM/xdc/vivado_target.xdc
 # Top level modle name 
 #
 topMod: diode_BPM_wrapper
-
+topSim: testBench
