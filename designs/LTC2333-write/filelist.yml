@@ -1,15 +1,11 @@
 #
 # HDL files
 #
-#hdl:
+hdl:
+  - designs/LTC2333-write/hdl/topMod.sv
 sim:
-  - designs/diode_BPM/hdl/testBench.sv
+  - designs/LTC2333-write/hdl/testBench.sv
   - shared/hdl/LTC2333_digitalModel.sv
-#
-# BD files
-#
-bd:
-  - designs/diode_BPM/bd/diode_BPM.bd
 #
 # IP repositories for the design 
 #
@@ -18,15 +14,14 @@ ip_repo:
 #
 # project specific XDC files below 
 #
-xdc:
-  - designs/diode_BPM/xdc/diode_BPM.xdc
+#xdc:
 #
 # Vivado target xdc file
 #
-xdcTarget: designs/diode_BPM/xdc/vivado_target.xdc
+xdcTarget: designs/LTC2333-write/xdc/vivado_target.xdc
 
 #
 # Top level modle name 
 #
-topMod: diode_BPM_wrapper
+topMod: topMod
 topSim: testBench
