@@ -2,10 +2,12 @@
 # HDL files
 #
 hdl:
-  - designs/LTC2333-write/hdl/topMod.sv
+  - shared/ip_repo/LTC2333-write/src/LTC2333-write.sv
 sim:
   - designs/LTC2333-write/hdl/testBench.sv
   - shared/hdl/LTC2333_digitalModel.sv
+ip_files:
+  - shared/ip_repo/LTC2333-write/component.xml
 #
 # IP repositories for the design 
 #
@@ -23,5 +25,5 @@ xdcTarget: designs/LTC2333-write/xdc/vivado_target.xdc
 #
 # Top level modle name 
 #
-topMod: topMod
+topMod: LTC2333_write
 topSim: testBench

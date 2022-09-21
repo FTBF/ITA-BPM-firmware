@@ -39,7 +39,7 @@ module LTC2333_write #(
                          );
 
    parameter NCHAN = 8;
-   parameter [7:0] active_channels = 8'h10;
+   parameter [7:0] active_channels = 8'hff;
    parameter [15:0] n_reads = 0;
    parameter [2:0] range = 0;
    parameter [31:0] sample_period = 10000;

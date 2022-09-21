@@ -53,6 +53,17 @@ module testBench(
                      .scki(scki),
                      .sdi(sdi)
                      );
+
+   LTC2333_digitalModel #(
+                              .DATA(24'habcdef)
+                              ) ltc2333_digitalInterface(
+                            .cnv(cnv),
+                            .scki(scki),
+                            .sdi(sdi),
+                            .busy(busy),
+                            .scko(scko),
+                            .sdo(sdo)
+                            );
    
    initial
    begin

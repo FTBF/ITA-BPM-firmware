@@ -37,27 +37,26 @@ module LTC2333_digitalModel #(
         #10 internal_clk <= ~internal_clk;        
      end
 
-   logic [7:0] busy_count = 0;
+   logic [7:0] busy_count = 25;
    always @(posedge internal_clk)
-     begin
-        if(cnv)
-          begin
-             busy <= 1;
-             busy_count <= 0;
-          end
-        else
-          begin
-             if(busy_count < 25)
-               begin
-                  busy <= 1;
-                  busy_count <= busy_count + 1;
-               end
-             else
-               begin
-                  busy <= 0;
-               end
-          end
-     end // always @ (posedge internal_clk)
+   begin
+      if(busy_count < 25)
+      begin
+         busy <= 1;
+         busy_count <= busy_count + 1;
+      end
+      else
+      begin
+         busy <= 0;
+      end
+   end // always @ (posedge internal_clk)
+
+   // bad sim only nonsense 
+   always @(posedge cnv)
+   begin
+      busy_count <= 0;
+   end
+   
 
    logic [3:0] cmd_ptr = 0;
    
