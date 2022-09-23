@@ -31,19 +31,56 @@ module testBench(
    logic scko;
    logic sdo;
 
+   localparam integer C_S_AXI_ADDR_WIDTH = 32;
+   localparam integer C_S_AXI_DATA_WIDTH = 32;
+   localparam integer N_REG = 4;
+   
+   logic IPIF_clk = 0;
+   logic IPIF_Bus2IP_resetn;
+   logic [(C_S_AXI_ADDR_WIDTH-1) : 0] IPIF_Bus2IP_Addr; //unused
+   logic                              IPIF_Bus2IP_RNW; //unused
+   logic [((C_S_AXI_DATA_WIDTH/8)-1) : 0] IPIF_Bus2IP_BE; //unused
+   logic [0 : 0]                          IPIF_Bus2IP_CS; //unused
+   logic [N_REG-1 : 0]                    IPIF_Bus2IP_RdCE; 
+   logic [N_REG-1 : 0]                    IPIF_Bus2IP_WrCE;
+   logic [(C_S_AXI_DATA_WIDTH-1) : 0]     IPIF_Bus2IP_Data;
+   logic [(C_S_AXI_DATA_WIDTH-1) : 0]     IPIF_IP2Bus_Data;
+   logic                                  IPIF_IP2Bus_WrAck;
+   logic                                  IPIF_IP2Bus_RdAck;
+   logic                                  IPIF_IP2Bus_Error;
+
+
    logic write_clk = 0;
    logic aresetn = 1;
 
    always #10 write_clk <= ~write_clk;
+   always #5  IPIF_clk <= ~IPIF_clk;
 
    LTC2333_write #(
                    .BUSY_SIGNAL( 0),
                    .BUSY_TIME(550), // ns
-                   .CLOCK_PERIOD(20) // ns
+                   .CLOCK_PERIOD(20), // ns
+                   .C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),
+                   .C_S_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH),
+                   .N_REG(N_REG)
+
                    ) ltc2333_write(
                      .clk(write_clk),
                      .aresetn(aresetn),
+                     .IPIF_clk(IPIF_clk),
                      // settings
+                     .IPIF_Bus2IP_resetn(IPIF_Bus2IP_resetn),
+                     .IPIF_Bus2IP_Addr(IPIF_Bus2IP_Addr), //unused
+                     .IPIF_Bus2IP_RNW(IPIF_Bus2IP_RNW), //unused
+                     .IPIF_Bus2IP_BE(IPIF_Bus2IP_BE), //unused
+                     .IPIF_Bus2IP_CS(IPIF_Bus2IP_CS), //unused
+                     .IPIF_Bus2IP_RdCE(IPIF_Bus2IP_RdCE), 
+                     .IPIF_Bus2IP_WrCE(IPIF_Bus2IP_WrCE),
+                     .IPIF_Bus2IP_Data(IPIF_Bus2IP_Data),
+                     .IPIF_IP2Bus_Data(IPIF_IP2Bus_Data),
+                     .IPIF_IP2Bus_WrAck(IPIF_IP2Bus_WrAck),
+                     .IPIF_IP2Bus_RdAck(IPIF_IP2Bus_RdAck),
+                     .IPIF_IP2Bus_Error(IPIF_IP2Bus_Error),
 
                      // inputs
                      .busy(0),
@@ -68,9 +105,38 @@ module testBench(
    initial
    begin
       aresetn <= 1;
+      IPIF_Bus2IP_resetn <= 1;
+      IPIF_Bus2IP_Addr <= 0; //unused
+      IPIF_Bus2IP_RNW <= 0; //unused
+      IPIF_Bus2IP_BE <= 0; //unused
+      IPIF_Bus2IP_CS <= 0; //unused
+      IPIF_Bus2IP_RdCE <= 0; 
+      IPIF_Bus2IP_WrCE <= 0;
+      IPIF_Bus2IP_Data <= 0;
 
       #10 aresetn <= 0;
+      IPIF_Bus2IP_resetn <= 0;
       #100 aresetn <= 1;
+      IPIF_Bus2IP_resetn <= 1;
+
+      #100;
+      IPIF_Bus2IP_RdCE <= 0; 
+      IPIF_Bus2IP_WrCE <= 2;
+      IPIF_Bus2IP_Data <= 32'h000300ff;
+      #10 IPIF_Bus2IP_WrCE <= 0;
+
+      #100;
+      IPIF_Bus2IP_RdCE <= 0; 
+      IPIF_Bus2IP_WrCE <= 8;
+      IPIF_Bus2IP_Data <= 32'd5;
+      #10 IPIF_Bus2IP_WrCE <= 0;
+
+      #20000;
+      IPIF_Bus2IP_RdCE <= 0; 
+      IPIF_Bus2IP_WrCE <= 1;
+      IPIF_Bus2IP_Data <= 32'h1;
+      #10 IPIF_Bus2IP_WrCE <= 0;
+      
    end
    
 endmodule
