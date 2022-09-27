@@ -71,9 +71,9 @@ module LTC2333_write_impl #(
 
    assign local_aresetn = aresetn && !params.reset;
 
-   assign data = {2'b10, ctrl_ptr[2:0], params.range};
-   assign busy_delay = BUSY_TIME/CLOCK_PERIOD;
-   assign sampling_delay = (params.sample_period - BUSY_TIME)/CLOCK_PERIOD - 28;
+   //assign data = {2'b10, ctrl_ptr[2:0], params.range};
+   //assign busy_delay = BUSY_TIME/CLOCK_PERIOD;
+   //assign sampling_delay = (params.sample_period - BUSY_TIME)/CLOCK_PERIOD - 28;
 
    assign scki = clock_enable & ~clk;
 
@@ -108,6 +108,8 @@ module LTC2333_write_impl #(
          n_reads_remaining <= 0;
          n_chan_remaining <= 0;
          clock_enable <= 0;
+         busy_delay <= 0;
+         sampling_delay <= 0;
          state <= RESET;
       end
       else
@@ -129,6 +131,8 @@ module LTC2333_write_impl #(
               delay_cnt <= 0;
               ctrl_ptr <= ctrl_ptr_resetVal;
               clock_enable <= 0;
+              busy_delay <= BUSY_TIME/CLOCK_PERIOD;
+              sampling_delay <= params.sample_period;
               if(params.mode == 0)
               begin
                  if(n_reads_remaining > 0)
@@ -173,8 +177,13 @@ module LTC2333_write_impl #(
                  begin
                     ctrl_ptr <= next_ctrl_ptr;
                     n_chan_remaining <= n_chan_remaining - 1;
+                    data <= {2'b10, ctrl_ptr[2:0], params.range};
                  end
-                 sdi <= data[7-ctrl_cnt[2:0]];
+                 else
+                 begin
+                    data <= {data[6:0],1'b0};
+                 end
+                 sdi <= data[7];
               end
               else
               begin

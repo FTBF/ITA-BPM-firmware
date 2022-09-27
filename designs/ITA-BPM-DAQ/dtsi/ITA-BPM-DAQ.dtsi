@@ -1,0 +1,5 @@
+/include/ "pl.dtsi"
+
+&overlay0 {
+        firmware-name = "ITA-BPM-DAQ.bit.bin";
+};

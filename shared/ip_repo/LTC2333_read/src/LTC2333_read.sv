@@ -136,21 +136,21 @@ module LTC2333_read
    //SDO is DDR w.r.t. scko
    logic [1:0] sdr_data;
    
-   IDDRE1 
-   #(
-     .DDR_CLK_EDGE("OPPOSITE_EDGE"), // IDDRE1 mode (OPPOSITE_EDGE, SAME_EDGE, SAME_EDGE_PIPELINED)
-     .IS_CB_INVERTED(1'b1),          // Optional inversion for CB
-     .IS_C_INVERTED(1'b0)            // Optional inversion for C
-     )
-   IDDRE1_inst 
-   (
-    .Q1(sdr_data[1]), // 1-bit output: Registered parallel output 1
-    .Q2(sdr_data[0]), // 1-bit output: Registered parallel output 2
-    .C(scko),   // 1-bit input: High-speed clock
-    .CB(scko), // 1-bit input: Inversion of High-speed clock C
-    .D(sdo),   // 1-bit input: Serial Data Input
-    .R(!aresetn)    // 1-bit input: Active High Async Reset
-    );
+   IDDR #(
+      .DDR_CLK_EDGE("OPPOSITE_EDGE"), // "OPPOSITE_EDGE", "SAME_EDGE" 
+                                      //    or "SAME_EDGE_PIPELINED" 
+      .INIT_Q1(1'b0), // Initial value of Q1: 1'b0 or 1'b1
+      .INIT_Q2(1'b0), // Initial value of Q2: 1'b0 or 1'b1
+      .SRTYPE("ASYNC") // Set/Reset type: "SYNC" or "ASYNC" 
+   ) IDDR_inst (
+      .Q1(sdr_data[1]), // 1-bit output for positive edge of clock
+      .Q2(sdr_data[0]), // 1-bit output for negative edge of clock
+      .C(scko),   // 1-bit clock input
+      .CE(1'b1), // 1-bit clock enable input
+      .D(sdo),   // 1-bit DDR data input
+      .R(!aresetn),   // 1-bit reset
+      .S(1'b0)    // 1-bit set
+   );
    
    //deserialization logic
    logic       aresetn_local;

@@ -1,0 +1,32 @@
+#
+# HDL files
+#
+#hdl:
+sim:
+  - designs/ITA-BPM-DAQ/hdl/testBench.sv
+  - shared/hdl/LTC2333_digitalModel.sv
+#
+# BD files
+#
+bd:
+  - designs/ITA-BPM-DAQ/bd/ITA_BPM_DAQ.bd
+#
+# IP repositories for the design 
+#
+ip_repo:
+  - shared/ip_repo
+#
+# project specific XDC files below 
+#
+xdc:
+  - designs/ITA-BPM-DAQ/xdc/ITA-BPM-DAQ.xdc
+#
+# Vivado target xdc file
+#
+xdcTarget: designs/ITA-BPM-DAQ/xdc/vivado_target.xdc
+
+#
+# Top level modle name 
+#
+topMod: ITA_BPM_DAQ_wrapper
+#topSim: testBench

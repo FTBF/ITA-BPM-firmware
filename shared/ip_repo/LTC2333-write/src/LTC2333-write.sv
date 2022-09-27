@@ -97,7 +97,7 @@ module LTC2333_write #(
                          .C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),
                          .N_REG(N_REG),
                          .PARAM_T(param_t),
-                         .DEFAULTS({32'h0, 32'd10000, 32'hff, 32'b0}),
+                         .DEFAULTS({32'h0, 32'd328, 32'hff, 32'b0}),
                          .SELF_RESET(128'b1)
                          ) parameterDecoder (
                          .clk(IPIF_clk),

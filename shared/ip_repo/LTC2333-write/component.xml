@@ -45,7 +45,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">aresetn</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">IPIF_Bus2IP_resetn</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>

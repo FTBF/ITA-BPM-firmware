@@ -5,6 +5,13 @@ diode_BPM:
   processor: ps7_cortexa9_0
   customdtsi: designs/diode_BPM/dtsi/diode_BPM.dtsi
 
+ITA-BPM-DAQ:
+  primaryFilelist: designs/ITA-BPM-DAQ/filelist.yml
+  boardPart: digilentinc.com:eclypse-z7:part0:1.1
+  device: xc7z020clg484-1
+  processor: ps7_cortexa9_0
+  customdtsi: designs/ITA-BPM-DAQ/dtsi/ITA-BPM-DAQ.dtsi
+
 LTC2333-write:
   primaryFilelist: designs/LTC2333-write/filelist.yml
   boardPart: digilentinc.com:eclypse-z7:part0:1.1
