@@ -2,8 +2,8 @@
 # HDL files
 #
 hdl:
-  - shared/ip_repo/LTC2333-write/src/LTC2333-write.sv
-  - shared/ip_repo/LTC2333-write/src/LTC2333-write_impl.sv
+  - designs/LTC2333-write/hdl/LTC2333-write.sv
+  - designs/LTC2333-write/hdl/LTC2333-write_impl.sv
   - shared/ip_repo/utilityip/IPIF_common/IPIF_parameterDecode.sv
   - shared/ip_repo/utilityip/IPIF_common/IPIF_clock_converter.sv
 sim:

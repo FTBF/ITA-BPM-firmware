@@ -597,7 +597,7 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/LTC2333-write.sv</spirit:name>
+        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_20479824</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -611,7 +611,7 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/LTC2333-write_impl.sv</spirit:name>
+        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write_impl.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_f64157bb</spirit:userFileType>
       </spirit:file>
@@ -619,7 +619,7 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/LTC2333-write.sv</spirit:name>
+        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -632,7 +632,7 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/LTC2333-write_impl.sv</spirit:name>
+        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write_impl.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>

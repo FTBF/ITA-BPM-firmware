@@ -54,7 +54,10 @@ module LTC2333_read
     input logic                                  FIFO_clk,
     input logic                                  FIFO_rden,
     output logic                                 FIFO_notEmpty,
-    output logic [31:0]                          FIFO_dout
+    output logic [31:0]                          FIFO_dout,
+
+    output logic                                 FIFO_full,
+    input logic                                  FIFO_write_block
 
     );
 
@@ -136,21 +139,21 @@ module LTC2333_read
    //SDO is DDR w.r.t. scko
    logic [1:0] sdr_data;
    
-   IDDRE1 
-   #(
-     .DDR_CLK_EDGE("OPPOSITE_EDGE"), // IDDRE1 mode (OPPOSITE_EDGE, SAME_EDGE, SAME_EDGE_PIPELINED)
-     .IS_CB_INVERTED(1'b1),          // Optional inversion for CB
-     .IS_C_INVERTED(1'b0)            // Optional inversion for C
-     )
-   IDDRE1_inst 
-   (
-    .Q1(sdr_data[1]), // 1-bit output: Registered parallel output 1
-    .Q2(sdr_data[0]), // 1-bit output: Registered parallel output 2
-    .C(scko),   // 1-bit input: High-speed clock
-    .CB(scko), // 1-bit input: Inversion of High-speed clock C
-    .D(sdo),   // 1-bit input: Serial Data Input
-    .R(!aresetn)    // 1-bit input: Active High Async Reset
-    );
+   IDDR #(
+      .DDR_CLK_EDGE("OPPOSITE_EDGE"), // "OPPOSITE_EDGE", "SAME_EDGE" 
+                                      //    or "SAME_EDGE_PIPELINED" 
+      .INIT_Q1(1'b0), // Initial value of Q1: 1'b0 or 1'b1
+      .INIT_Q2(1'b0), // Initial value of Q2: 1'b0 or 1'b1
+      .SRTYPE("ASYNC") // Set/Reset type: "SYNC" or "ASYNC" 
+   ) IDDR_inst (
+      .Q1(sdr_data[1]), // 1-bit output for positive edge of clock
+      .Q2(sdr_data[0]), // 1-bit output for negative edge of clock
+      .C(scko),   // 1-bit clock input
+      .CE(1'b1), // 1-bit clock enable input
+      .D(sdo),   // 1-bit DDR data input
+      .R(!aresetn),   // 1-bit reset
+      .S(1'b0)    // 1-bit set
+   );
    
    //deserialization logic
    logic       aresetn_local;
@@ -212,7 +215,6 @@ module LTC2333_read
    end // always @ (posedge clk or negedge aresetn_local)
    
 
-   logic full;
    logic empty;
    assign FIFO_notEmpty = !empty;
    xpm_fifo_async 
@@ -243,7 +245,7 @@ module LTC2333_read
     .dbiterr(),             // 1-bit output: Double Bit Error: Indicates that the ECC decoder detected
     .dout(FIFO_dout),                   // READ_DATA_WIDTH-bit output: Read Data: The output data bus is driven
     .empty(empty),                 // 1-bit output: Empty Flag: When asserted, this signal indicates that the
-    .full(full),                   // 1-bit output: Full Flag: When asserted, this signal indicates that the
+    .full(FIFO_full),                   // 1-bit output: Full Flag: When asserted, this signal indicates that the
     .overflow(),           // 1-bit output: Overflow: This signal indicates that a write request
     .prog_empty(),       // 1-bit output: Programmable Empty: This signal is asserted when the
     .prog_full(),         // 1-bit output: Programmable Full: This signal is asserted when the
@@ -262,7 +264,7 @@ module LTC2333_read
     .rst(!aresetn_local),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
     .sleep(1'b0),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
     .wr_clk(clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
-    .wr_en(!full && params_to_IP.enable && latch_pulse)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
+    .wr_en(!FIFO_write_block && params_to_IP.enable && latch_pulse)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
     );
 
 endmodule

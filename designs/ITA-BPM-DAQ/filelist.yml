@@ -29,4 +29,4 @@ xdcTarget: designs/ITA-BPM-DAQ/xdc/vivado_target.xdc
 # Top level modle name 
 #
 topMod: ITA_BPM_DAQ_wrapper
-#topSim: testBench
+topSim: testBench

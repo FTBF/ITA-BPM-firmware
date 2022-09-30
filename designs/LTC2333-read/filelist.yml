@@ -2,7 +2,7 @@
 # HDL files
 #
 hdl:
-  - shared/ip_repo/LTC2333_read/src/LTC2333_read.sv
+  - designs/LTC2333-read/hdl/LTC2333_read.sv
   - shared/ip_repo/utilityip/IPIF_common/IPIF_parameterDecode.sv
   - shared/ip_repo/utilityip/IPIF_common/IPIF_clock_converter.sv
 sim:
