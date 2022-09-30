@@ -110,6 +110,7 @@ module LTC2333_write_impl #(
          clock_enable <= 0;
          busy_delay <= 0;
          sampling_delay <= 0;
+         data <= 0;
          state <= RESET;
       end
       else
@@ -157,12 +158,22 @@ module LTC2333_write_impl #(
            begin
               if(BUSY_SIGNAL)
               begin              
-                 if(!busy) state <= SEND;
+                 if(!busy)
+                 begin
+                    data <= {2'b10, ctrl_ptr[2:0], params.range};
+                    ctrl_ptr <= next_ctrl_ptr;
+                    state <= SEND;
+                 end
               end
               else
               begin
                  busy_cnt <= busy_cnt + 1;
-                 if(busy_cnt > busy_delay) state <= SEND;
+                 if(busy_cnt > busy_delay)
+                 begin
+                    data <= {2'b10, ctrl_ptr[2:0], params.range};
+                    ctrl_ptr <= next_ctrl_ptr;
+                    state <= SEND;
+                 end
               end
            end
               
