@@ -54,7 +54,10 @@ module LTC2333_read
     input logic                                  FIFO_clk,
     input logic                                  FIFO_rden,
     output logic                                 FIFO_notEmpty,
-    output logic [31:0]                          FIFO_dout
+    output logic [31:0]                          FIFO_dout,
+
+    output logic                                 FIFO_full,
+    input logic                                  FIFO_write_block
 
     );
 
@@ -212,7 +215,6 @@ module LTC2333_read
    end // always @ (posedge clk or negedge aresetn_local)
    
 
-   logic full;
    logic empty;
    assign FIFO_notEmpty = !empty;
    xpm_fifo_async 
@@ -243,7 +245,7 @@ module LTC2333_read
     .dbiterr(),             // 1-bit output: Double Bit Error: Indicates that the ECC decoder detected
     .dout(FIFO_dout),                   // READ_DATA_WIDTH-bit output: Read Data: The output data bus is driven
     .empty(empty),                 // 1-bit output: Empty Flag: When asserted, this signal indicates that the
-    .full(full),                   // 1-bit output: Full Flag: When asserted, this signal indicates that the
+    .full(FIFO_full),                   // 1-bit output: Full Flag: When asserted, this signal indicates that the
     .overflow(),           // 1-bit output: Overflow: This signal indicates that a write request
     .prog_empty(),       // 1-bit output: Programmable Empty: This signal is asserted when the
     .prog_full(),         // 1-bit output: Programmable Full: This signal is asserted when the
@@ -262,7 +264,7 @@ module LTC2333_read
     .rst(!aresetn_local),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
     .sleep(1'b0),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
     .wr_clk(clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
-    .wr_en(!full && params_to_IP.enable && latch_pulse)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
+    .wr_en(!FIFO_write_block && params_to_IP.enable && latch_pulse)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
     );
 
 endmodule
