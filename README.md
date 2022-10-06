@@ -1,5 +1,89 @@
 # ITA BPM firmware
 
+This repo holds the firmware required to operate the ITA BPM system based on a Digilent Eclypse-Z7.
+
+## Project checkout instructions
+
+This repo makes use of submoduels.  To automatiucally check these out ass the `--recursive` flag to the clone command as follows
+
+```
+git clone --recursive git@github.com:FTBF/ITA-BPM-firmware.git
+```
+
+## Vivado projects in repo
+
+### ITA-BPM-DAQ
+
+This projects contains the main firmware design for the BPM DAQ.
+
+### diode_BPM
+
+Test project used as a basis for the petalinux image.
+
+### LTC2333-write
+
+IP project for the IP which controls the LTC2333 ADCs.
+
+### LTC2333-read
+
+IP project to recieve data from LTC2333 ADCs.
+
+
+## Creating Vivado project with "Xil_prj_utils"
+
+The vivado project is not stored directly in this repo.  Instead the project is regenerated with the "Xil_prj_utils" framework after checkout.  The framework runs in python3 and requires the python packages specified in "prj_utils/requirements.txt".  I recommend that a python virtualenv ([help](https://docs.python.org/3/library/venv.html)) be used to set up a python environment independent of the system installed version.  All packages can be installed with the following command
+
+```
+pip install -r requirements.txt
+```
+
+In addition to python3 you will need Vivado 2019.2 sourced in your PATH.
+
+```
+source [install path]/Xilinx/Vivado/2019.2/settings64.sh
+```
+
+### Creating Vivado project after checkout
+
+In order to generate the Vivado project folder after checkout run the following commands
+
+To list all avaliable projects in the repo
+```
+./project list
+```
+
+Create a specific project
+```
+./project create [project name]
+```
+
+build a project (bit file and device tree overlay)
+```
+./project build [project name]
+```
+
+The vivado project can also be used "normally" to compile and analyze hte project and view the BD file after it is created.  
+
+### pMCU firmware
+
+In addition to the Vivado projects for the ZYNQ, there is also firmware for the pMCU microcontroller (an ATmega328pb) to bypass the SYZYGY DNA logic needed to power the ZYNQ IO banks which power the SYZYGY ports.  This is housed in the "pMCU-firmware` directory and is independent of the "Xil_prj_utils" framework.  
+
+### Pre-requisites for building the firmware
+
+The firmware is built using `avr-g++` and requires the `gcc-avr` and `avr-libc` packages to be installed.
+
+### Building the firmware
+
+With the pre-requisutes installed the firmware should build simply by running `make` in the `pMCU-firmware` folder.  This will produce the output file `main.hex` which can be uploaded to microcontroller.
+
+### Programming the pMCU microcontroller
+
+The firmware is loaded with a MPLAB SNAP programmer connected to the J9 header of the Eclypse.  Note that J8 is a 6 lin header while the SNAP has an 8 pin header.  Pin 1 of J8 should connect to pin 2 of the SNAP.  The firmware can be loaded from the SNAL using microchip's "MPLAB X IPE" tool [here](https://www.microchip.com/en-us/tools-resources/develop/mplab-x-ide).    
+
+#### MPLAB SNAP configuration issues
+
+When it arrived the MPLAB SNAP had a non-functional version of firmware installed and the "MPLAB X IPE" tool was unable to normally update the firmware.  This was remedied by performing a "factory reset" on the SNAP.  This is accomplished by using the "tools/Hardware Tool Emergency Boot Firmware Recovery" tool in the "MPLAB X IPE" (This only successfully completed in windows for me).  After this is run successfully, the IPE will load a new firmware onto the SNAP the next time it is used to program a device.  
+
 ## ubuntu/petalinux notes
 
 The base board for this project is an Eclypse-Z7.  This section holds notes on how to create the boot/rootfs images for the board.  This is not a complete recipe ... but a list of resources used
@@ -104,7 +188,7 @@ all:
 
 ### Loading PL firmware
 
-`fpgautil` can be used to load the firmware into the PL after the bit file is converted to a bin file.  A copy of fpgautil can be found (here)[https://github.com/Xilinx/meta-xilinx-tools/blob/master/recipes-bsp/fpga-manager-script/files/fpgautil.c].  To fully load the firmware you will need the converted bin file and the compiled device tree overlay (dtbo) file.  The firmware is then loaded with the following incantation
+`fpgautil` can be used to load the firmware into the PL after the bit file is converted to a bin file.  A copy of fpgautil can be found [here](https://github.com/Xilinx/meta-xilinx-tools/blob/master/recipes-bsp/fpga-manager-script/files/fpgautil.c).  To fully load the firmware you will need the converted bin file and the compiled device tree overlay (dtbo) file.  The firmware is then loaded with the following incantation
 
 ```
 sudo ./fpgautil -b diode_BPM.bit.bin -o device-tree/pl.dtbo
