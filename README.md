@@ -78,11 +78,11 @@ With the pre-requisutes installed the firmware should build simply by running `m
 
 ### Programming the pMCU microcontroller
 
-The firmware is loaded with a MPLAB SNAP programmer connected to the J9 header of the Eclypse.  Note that J8 is a 6 lin header while the SNAP has an 8 pin header.  Pin 1 of J8 should connect to pin 2 of the SNAP.  The firmware can be loaded from the SNAL using microchip's "MPLAB X IPE" tool [here](https://www.microchip.com/en-us/tools-resources/develop/mplab-x-ide).    
+The firmware is loaded with a MPLAB SNAP programmer connected to the J9 header of the Eclypse (located next to the P MOD A port) .  Note that J9 is a 6 lin header while the SNAP has an 8 pin header.  Pin 1 of J9 should connect to pin 2 of the SNAP.  The firmware can be loaded from the SNAL using microchip's "MPLAB X IPE" tool [here](https://www.microchip.com/en-us/tools-resources/develop/mplab-x-ide).    
 
 #### MPLAB SNAP configuration issues
 
-When it arrived the MPLAB SNAP had a non-functional version of firmware installed and the "MPLAB X IPE" tool was unable to normally update the firmware.  This was remedied by performing a "factory reset" on the SNAP.  This is accomplished by using the "tools/Hardware Tool Emergency Boot Firmware Recovery" tool in the "MPLAB X IPE" (This only successfully completed in windows for me).  After this is run successfully, the IPE will load a new firmware onto the SNAP the next time it is used to program a device.  
+When it arrived the MPLAB SNAP had a non-functional version of firmware installed and the "MPLAB X IPE" tool was unable to normally update the firmware.  This was remedied by performing a "factory reset" on the SNAP.  This is accomplished by using the "tools/Hardware Tool Emergency Boot Firmware Recovery" tool in the "MPLAB X IPE" (This only successfully completed in windows for me).  After this is run successfully, the IPE will load a new firmware onto the SNAP the next time it is used to program a device.        
 
 ## ubuntu/petalinux notes
 
