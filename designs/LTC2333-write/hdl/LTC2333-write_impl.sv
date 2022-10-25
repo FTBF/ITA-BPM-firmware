@@ -51,7 +51,7 @@ module LTC2333_write_impl #(
 
    parameter NCHAN = 8;
    
-   typedef enum { RESET, IDLE, BUSY, SEND, DELAY } state_t;
+   typedef enum { RESET, IDLE, BUSY_WAIT, BUSY, SEND, DELAY } state_t;
 
    state_t state;
    logic [7:0]  busy_cnt;
@@ -150,19 +150,17 @@ module LTC2333_write_impl #(
               else
               begin
                  cnv <= 1;
-                 state <= BUSY;
+                 state <= BUSY_WAIT;
               end
            end
            
-           BUSY:
+           BUSY_WAIT:
            begin
               if(BUSY_SIGNAL)
               begin              
-                 if(!busy)
+                 if(busy)
                  begin
-                    data <= {2'b10, ctrl_ptr[2:0], params.range};
-                    ctrl_ptr <= next_ctrl_ptr;
-                    state <= SEND;
+                    state <= BUSY;
                  end
               end
               else
@@ -175,6 +173,16 @@ module LTC2333_write_impl #(
                     state <= SEND;
                  end
               end
+           end
+
+           BUSY:
+           begin
+              if(!busy)
+              begin
+                 data <= {2'b10, ctrl_ptr[2:0], params.range};
+                 ctrl_ptr <= next_ctrl_ptr;
+                 state <= SEND;
+              end              
            end
               
            SEND:
