@@ -24,47 +24,42 @@ module testBench(
 
                  );
    
-   wire [14:0]DDR_addr;
-   wire [2:0] DDR_ba;
-   wire       DDR_cas_n;
-   wire       DDR_ck_n;
-   wire       DDR_ck_p;
-   wire       DDR_cke;
-   wire       DDR_cs_n;
-   wire [3:0] DDR_dm;
-   wire [31:0] DDR_dq;
-   wire [3:0]  DDR_dqs_n;
-   wire [3:0]  DDR_dqs_p;
-   wire        DDR_odt;
-   wire        DDR_ras_n;
-   wire        DDR_reset_n;
-   wire        DDR_we_n;
-   wire        FIXED_IO_ddr_vrn;
-   wire        FIXED_IO_ddr_vrp;
-   wire [53:0] FIXED_IO_mio;
-   wire        FIXED_IO_ps_clk;
-   wire        FIXED_IO_ps_porb;
-   wire        FIXED_IO_ps_srstb;
-   wire [5:0]  GPIO_tri_o;
-   wire        cnv;
-   wire        scki;
-   wire        scko_0;
-   wire        scko_1;
-   wire        scko_2;
-   wire        scko_3;
-   wire        scko_4;
-   wire        scko_5;
-   wire        scko_6;
-   wire        scko_7;
-   wire        sdi;
-   wire        sdo_0;
-   wire        sdo_1;
-   wire        sdo_2;
-   wire        sdo_3;
-   wire        sdo_4;
-   wire        sdo_5;
-   wire        sdo_6;
-   wire        sdo_7;
+  wire [7:0]Busy;
+  wire [7:0]CNV;
+  wire [14:0]DDR_addr;
+  wire [2:0]DDR_ba;
+  wire DDR_cas_n;
+  wire DDR_ck_n;
+  wire DDR_ck_p;
+  wire DDR_cke;
+  wire DDR_cs_n;
+  wire [3:0]DDR_dm;
+  wire [31:0]DDR_dq;
+  wire [3:0]DDR_dqs_n;
+  wire [3:0]DDR_dqs_p;
+  wire DDR_odt;
+  wire DDR_ras_n;
+  wire DDR_reset_n;
+  wire DDR_we_n;
+  wire FIXED_IO_ddr_vrn;
+  wire FIXED_IO_ddr_vrp;
+  wire [53:0]FIXED_IO_mio;
+  wire FIXED_IO_ps_clk;
+  wire FIXED_IO_ps_porb;
+  wire FIXED_IO_ps_srstb;
+  wire [5:0]GPIO_tri_o;
+  wire [1:0]SCKI_N;
+  wire [1:0]SCKI_P;
+  wire [7:0]SCKO_N;
+  wire [7:0]SCKO_P;
+  wire SCL_0;
+  wire SCL_1;
+  wire SDA_0;
+  wire SDA_1;
+  wire [1:0]SDI_N;
+  wire [1:0]SDI_P;
+  wire [7:0]SDO_N;
+  wire [7:0]SDO_P;
 
    reg         resp;
    
@@ -76,8 +71,10 @@ module testBench(
 
    always #5 tb_ACLK = !tb_ACLK;
    
-   ITA_BPM_DAQ_wrapper dut
-   (DDR_addr,
+ITA_BPM_DAQ_wrapper dut
+   (Busy,
+    CNV,
+    DDR_addr,
     DDR_ba,
     DDR_cas_n,
     DDR_ck_n,
@@ -99,25 +96,18 @@ module testBench(
     FIXED_IO_ps_porb,
     FIXED_IO_ps_srstb,
     GPIO_tri_o,
-    cnv,
-    scki,
-    scko_0,
-    scko_1,
-    scko_2,
-    scko_3,
-    scko_4,
-    scko_5,
-    scko_6,
-    scko_7,
-    sdi,
-    sdo_0,
-    sdo_1,
-    sdo_2,
-    sdo_3,
-    sdo_4,
-    sdo_5,
-    sdo_6,
-    sdo_7);
+    SCKI_N,
+    SCKI_P,
+    SCKO_N,
+    SCKO_P,
+    SCL_0,
+    SCL_1,
+    SDA_0,
+    SDA_1,
+    SDI_N,
+    SDI_P,
+    SDO_N,
+    SDO_P);
 
    logic [7:0] scko;
    assign {scko_0, scko_1, scko_2, scko_3, scko_4, scko_5, scko_6, scko_7} = scko;

@@ -122,7 +122,7 @@ module testBench(
       #100;
       IPIF_Bus2IP_RdCE <= 0; 
       IPIF_Bus2IP_WrCE <= 2;
-      IPIF_Bus2IP_Data <= 32'h000300ff;
+      IPIF_Bus2IP_Data <= 32'h000001ff;
       #10 IPIF_Bus2IP_WrCE <= 0;
 
       #100;

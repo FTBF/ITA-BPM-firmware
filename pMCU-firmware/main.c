@@ -17,7 +17,7 @@ uint8_t data[2];
 //set defaults
 const uint8_t NREG = 8;
 //vadj_a, vadj_b, vadj_c, NA, NA, NA, NA, SaveSettings
-uint8_t config_regs[NREG] = {0xcc, 0xcc, 0x9f, 0x00, 0x00, 0x00, 0x00, 0x00};
+uint8_t config_regs[NREG] = {0xc2, 0xc2, 0x9f, 0x00, 0x00, 0x00, 0x00, 0x00};
 uint8_t readback_reg = 0;
 //set bits here to apply that register's settings on startup 
 uint8_t reg_activity = 0x07;
