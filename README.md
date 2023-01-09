@@ -4,7 +4,7 @@ This repo holds the firmware required to operate the ITA BPM system based on a D
 
 ## Project checkout instructions
 
-This repo makes use of submoduels.  To automatiucally check these out ass the `--recursive` flag to the clone command as follows
+This repo makes use of submoduels.  To automatiucally check these out add the `--recursive` flag to the clone command as follows
 
 ```
 git clone --recursive git@github.com:FTBF/ITA-BPM-firmware.git
@@ -62,7 +62,7 @@ build a project (bit file and device tree overlay)
 ./project build [project name]
 ```
 
-The vivado project can also be used "normally" to compile and analyze hte project and view the BD file after it is created.  
+The vivado project can also be used "normally" to compile and analyze the project and view the BD file after it is created.  
 
 ### pMCU firmware
 
@@ -140,6 +140,20 @@ https://rcn-ee.com/rootfs/eewiki/minfs/
 
 #### Add xilinx kernal modules
 
+##### Add Xilinx AXI I2C support 
+
+By default the ubuntu image lacks support for the Xilinx AXI I2C module.  This must be added in the petalinux build through the kernel configuration menu
+
+```petalinux-config -c kernel```
+
+The activate the following module 
+
+```Device Driver -> I2C Support -> I2C Hardware Bus support ->  Xilinx I2C Controller```
+
+Ensure that the box has a `M` and not a `*` so that petalinux will build the I2C Controller as a kernal module which can be imported into ubuntu.  Also make sure to rebuild the petalinux project after this change is made
+
+##### Installing kwenl modules 
+
 petalinux places a copy of the kernel modules it builds in
 
 ```build/tmp/work/plnx_zynq7-xilinx-linux-gnueabi/linux-xlnx/4.19-xilinx-v2019.2+git999-r0/image/lib/modules/4.19.0-xilinx-v2019.2```
@@ -147,6 +161,10 @@ petalinux places a copy of the kernel modules it builds in
 This folder should be coppied into the `/lib/modules`.  Make sure that the file and folder ownership is set to root.  You will need to run the command `sudo depmod` to update the list of modules.  In order for the uio module to be recognized and loaded during the dtbo loading you will need to create a `modprobe.d` config file `/lib/modprobe.d/uio-pdrv-genirq.conf` with the following contents
 
 ```options uio_pdrv_genirq of_id="linux,uio-pdrv-genirq"```
+
+Similarly for the AXI I2C device make a file `/lib/modprobe.d/i2c-xiic.conf` with the contents
+
+```options i2c-xiic of_id="xlnx,xps-iic-2.00.a"```
 
 #### Fix to load sshd faster on boot
 
