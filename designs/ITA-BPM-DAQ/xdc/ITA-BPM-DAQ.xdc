@@ -40,14 +40,14 @@ set_property -dict { PACKAGE_PIN A19   IOSTANDARD LVCMOS33 } [get_ports { GPIO_t
 #set_property -dict { PACKAGE_PIN H17   IOSTANDARD LVCMOS33 } [get_ports { jb[7] }]; #IO_L7P_T1_AD2P Sch=jb10_fpga
 
 ## Syzygy Port A
-set_property -dict { IOSTANDARD LVDS_25 } [get_ports { SCKI* }];
+set_property -dict { IOSTANDARD LVDS_25   DIFF_TERM TRUE} [get_ports { SCKI* }];
 set_property -dict { IOSTANDARD LVDS_25 } [get_ports { SCKO* }];
-set_property -dict { IOSTANDARD LVDS_25 } [get_ports { SDI* }];
+set_property -dict { IOSTANDARD LVDS_25   DIFF_TERM TRUE } [get_ports { SDI* }];
 set_property -dict { IOSTANDARD LVDS_25 } [get_ports { SDO* }];
-set_property -dict { IOSTANDARD LVCMOS25 } [get_ports { Busy* }];
-set_property -dict { IOSTANDARD LVCMOS25 } [get_ports { CNV* }];
-set_property -dict { IOSTANDARD LVCMOS25 } [get_ports { SCL* }];
-set_property -dict { IOSTANDARD LVCMOS25 } [get_ports { SDA* }];
+set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { Busy* }];
+set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { CNV* }];
+set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { SCL* }];
+set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { SDA* }];
 #set_property -dict { PACKAGE_PIN N20  } [get_ports { syzygy_a_c2p_clk_n }]; #IO_L14N_T2_SRCC Sch=syzygy_a_c2p_clk_n
 set_property -dict { PACKAGE_PIN N19  } [get_ports { SCKI_P[0] }]; #IO_L14P_T2_SRCC Sch=syzygy_a_c2p_clk_p
 #set_property -dict { PACKAGE_PIN T17  } [get_ports { scko_0 }]; #IO_L21N_T3_DQS Sch=syzygy_a_d_n[0]

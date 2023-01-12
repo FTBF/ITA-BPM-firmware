@@ -30,6 +30,7 @@ module LTC2333_write #(
 
                        )(
                          input wire                                   clk,
+                         input wire                                   clk_ps,
                          input wire                                   aresetn,
 
                          input wire                                   IPIF_clk,
@@ -54,8 +55,8 @@ module LTC2333_write #(
 
                          // outputs
                          output reg                                   cnv,
-                         output wire                                  scki,
-                         output reg                                   sdi
+                         output wire [1:0]                            scki,
+                         output reg [1:0]                             sdi
                          );
 
 
@@ -138,6 +139,7 @@ module LTC2333_write #(
                         .PARAM_T(param_t)
                         ) ltc2333_write_impl(
                           .clk(clk),
+                          .clk_ps(clk_ps),
                           .aresetn(aresetn),
 
                           .IPIF_clk(IPIF_clk),

@@ -30,22 +30,23 @@ module LTC2333_write_impl #(
                        parameter integer N_REG = 4,
                        parameter type PARAM_T = logic[N_REG*C_S_AXI_DATA_WIDTH-1:0]
                        )(
-                         input wire  clk,
-                         input wire  aresetn,
+                         input wire        clk,
+                         input wire        clk_ps,
+                         input wire        aresetn,
 
-                         input wire  IPIF_clk,
+                         input wire        IPIF_clk,
                                                                       
                          //IPIF interface
                          //configuration parameter interface 
-                         input PARAM_T params,
+                         input             PARAM_T params,
                          
                          // inputs
-                         input wire  busy,
+                         input wire        busy,
 
                          // outputs
-                         output reg  cnv,
-                         output wire scki,
-                         output reg  sdi
+                         output reg        cnv,
+                         output wire [1:0] scki,
+                         output reg [1:0]  sdi
                          );
 
 
@@ -64,10 +65,12 @@ module LTC2333_write_impl #(
    logic [15:0] n_reads_remaining;
    logic [3:0]  n_chan_remaining;
    logic        clock_enable;
+   logic        clock_enable_ps;       
    logic [7:0]  data;
    logic [15:0] busy_delay;
    logic [31:0] sampling_delay;
    logic        local_aresetn;
+   logic [1:0]  sdi_ddr;
 
    assign local_aresetn = aresetn && !params.reset;
 
@@ -75,7 +78,7 @@ module LTC2333_write_impl #(
    //assign busy_delay = BUSY_TIME/CLOCK_PERIOD;
    //assign sampling_delay = (params.sample_period - BUSY_TIME)/CLOCK_PERIOD - 28;
 
-   assign scki = clock_enable & ~clk;
+   //assign scki = clock_enable & ~clk;
 
    //Calculate next active channel 
    always_comb begin
@@ -93,14 +96,54 @@ module LTC2333_write_impl #(
          next_ctrl_ptr = ctrl_ptr + 1;
          ctrl_ptr_resetVal = 0;
       end
+   end // always_comb
+
+   always_ff @(posedge clk_ps)
+   begin
+      clock_enable_ps <= clock_enable;
    end
 
+   generate
+      genvar i;
+      for(i = 0; i < 2; i = i+1)
+      begin
+         ODDR #(
+                .DDR_CLK_EDGE("SAME_EDGE"), // "OPPOSITE_EDGE" or "SAME_EDGE" 
+                .INIT(1'b0),    // Initial value of Q: 1'b0 or 1'b1
+                .SRTYPE("SYNC") // Set/Reset type: "SYNC" or "ASYNC" 
+                ) sdi_ddr_reg (
+                               .Q(sdi[i]),   // 1-bit DDR output
+                               .C(clk),   // 1-bit clock input
+                               .CE(1'b1), // 1-bit clock enable input
+                               .D1(sdi_ddr[1]), // 1-bit data input (positive edge)
+                               .D2(sdi_ddr[0]), // 1-bit data input (negative edge)
+                               .R(1'b0),   // 1-bit reset
+                               .S(1'b0)    // 1-bit set
+                               );
+
+         ODDR #(
+                .DDR_CLK_EDGE("SAME_EDGE"), // "OPPOSITE_EDGE" or "SAME_EDGE" 
+                .INIT(1'b0),    // Initial value of Q: 1'b0 or 1'b1
+                .SRTYPE("SYNC") // Set/Reset type: "SYNC" or "ASYNC" 
+                ) scki_ddr_reg (
+                                .Q(scki[i]),   // 1-bit DDR output
+                                .C(clk_ps),   // 1-bit clock input
+                                .CE(1'b1), // 1-bit clock enable input
+                                .D1(clock_enable_ps), // 1-bit data input (positive edge)
+                                .D2(1'b0), // 1-bit data input (negative edge)
+                                .R(1'b0),   // 1-bit reset
+                                .S(1'b0)    // 1-bit set
+                                );
+
+      end
+   endgenerate
+         
    always_ff @(posedge clk or negedge local_aresetn)
    begin
       if(local_aresetn == 0)
       begin
          cnv <= 0;
-         sdi <= 0;
+         sdi_ddr <= 0;
          busy_cnt <= 0;
          delay_cnt <= 0;
          ctrl_cnt <= 0;
@@ -126,7 +169,7 @@ module LTC2333_write_impl #(
            IDLE:
            begin                
               cnv <= 0;
-              sdi <= 0;
+              sdi_ddr <= 0;
               busy_cnt <= 0;
               ctrl_cnt <= 0;
               delay_cnt <= 0;
@@ -140,7 +183,7 @@ module LTC2333_write_impl #(
                  begin
                     n_reads_remaining <= n_reads_remaining - 1;
                     cnv <= 1;
-                    state <= BUSY;
+                    state <= BUSY_WAIT;
                  end
                  else
                  begin
@@ -189,10 +232,10 @@ module LTC2333_write_impl #(
            begin
               cnv <= 0;
               clock_enable <= 1;
-              ctrl_cnt <= ctrl_cnt + 1;     
+              ctrl_cnt <= ctrl_cnt + 2;     
               if(n_chan_remaining > 0)
               begin
-                 if(ctrl_cnt[2:0] == 7)
+                 if(ctrl_cnt[2:0] == 6)
                  begin
                     ctrl_ptr <= next_ctrl_ptr;
                     n_chan_remaining <= n_chan_remaining - 1;
@@ -200,13 +243,13 @@ module LTC2333_write_impl #(
                  end
                  else
                  begin
-                    data <= {data[6:0],1'b0};
+                    data <= {data[5:0],2'b0};
                  end
-                 sdi <= data[7];
+                 sdi_ddr <= data[7:6];
               end
               else
               begin
-                 sdi <= 0;
+                 sdi_ddr <= 0;
                  if(ctrl_cnt >= 24)
                  begin
                     clock_enable <= 0;

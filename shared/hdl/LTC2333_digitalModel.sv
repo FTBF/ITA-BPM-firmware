@@ -67,7 +67,20 @@ module LTC2333_digitalModel #(
    logic       reset = 0;
    logic       write_byte = 0;
    logic       change = 0;
-   always @(posedge scki or posedge busy)
+   IDDRE1 #(
+            .DDR_CLK_EDGE("OPPOSITE_EDGE"), // IDDRE1 mode (OPPOSITE_EDGE, SAME_EDGE, SAME_EDGE_PIPELINED)
+            .IS_CB_INVERTED(1'b1),          // Optional inversion for CB
+            .IS_C_INVERTED(1'b0)            // Optional inversion for C
+            )
+   IDDRE1_inst (
+                .Q1(Q1), // 1-bit output: Registered parallel output 1
+                .Q2(Q2), // 1-bit output: Registered parallel output 2
+                .C(scki),   // 1-bit input: High-speed clock
+                .CB(scki), // 1-bit input: Inversion of High-speed clock C
+                .D(D),   // 1-bit input: Serial Data Input
+                .R(R)    // 1-bit input: Active High Async Reset
+                );
+   always @(posedge scki or negedge scki or posedge busy)
      begin
         if(busy)
           begin
@@ -115,13 +128,12 @@ module LTC2333_digitalModel #(
      end
          
 
-   logic scko_z = 0;
    logic [7:0] current_cmd;
-   always @(posedge scki or posedge busy)
+   always @(posedge scki or negedge scki or posedge busy)
      begin
         if(busy)
           begin
-             scko_z <= 0;
+             scko <= 0;
              output_bit_cnt <= 23;
              if(change) cmd_ptr = 0;
              else       cmd_ptr = next_cmd_ptr;
@@ -129,7 +141,7 @@ module LTC2333_digitalModel #(
           end
         else
           begin
-             scko_z <= !scko_z;
+             scko <= !scko;
         
              if(output_bit_cnt > 0) output_bit_cnt <= output_bit_cnt - 1;
              else                   output_bit_cnt <= 23;
@@ -139,10 +151,6 @@ module LTC2333_digitalModel #(
           end
      end // always @ (posedge scki or posedge busy)
 
-   always @(negedge scki)
-     begin
-        scko <= scko_z;
-     end
    
    
    

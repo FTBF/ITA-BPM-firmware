@@ -138,26 +138,56 @@ module LTC2333_read
    
    //SDO is DDR w.r.t. scko
    logic [1:0] sdr_data;
+   logic       scko_dly;
+
+   IDELAYE2 #(
+              .CINVCTRL_SEL("FALSE"),          // Enable dynamic clock inversion (FALSE, TRUE)
+              .DELAY_SRC("IDATAIN"),           // Delay input (IDATAIN, DATAIN)
+              .HIGH_PERFORMANCE_MODE("FALSE"), // Reduced jitter ("TRUE"), Reduced power ("FALSE")
+              .IDELAY_TYPE("FIXED"),           // FIXED, VARIABLE, VAR_LOAD, VAR_LOAD_PIPE
+              .IDELAY_VALUE(31),                // Input delay tap setting (0-31)
+              .PIPE_SEL("FALSE"),              // Select pipelined mode, FALSE, TRUE
+              .REFCLK_FREQUENCY(200.0),        // IDELAYCTRL clock input frequency in MHz (190.0-210.0, 290.0-310.0).
+              .SIGNAL_PATTERN("DATA")          // DATA, CLOCK input signal
+              )
+   IDELAYE2_inst (
+                  .CNTVALUEOUT(), // 5-bit output: Counter value output
+                  .DATAOUT(scko_dly),         // 1-bit output: Delayed data output
+                  .C(1'b0),                     // 1-bit input: Clock input
+                  .CE(1'b1),                   // 1-bit input: Active high enable increment/decrement input
+                  .CINVCTRL(1'b0),       // 1-bit input: Dynamic clock inversion input
+                  .CNTVALUEIN(5'b0),   // 5-bit input: Counter value input
+                  .DATAIN(1'b0),           // 1-bit input: Internal delay data input
+                  .IDATAIN(scko),         // 1-bit input: Data input from the I/O
+                  .INC(1'b0),                 // 1-bit input: Increment / Decrement tap delay input
+                  .LD(1'b0),                   // 1-bit input: Load IDELAY_VALUE input
+                  .LDPIPEEN(1'b0),       // 1-bit input: Enable PIPELINE register to load data input
+                  .REGRST(1'b0)            // 1-bit input: Active-high reset tap-delay input
+                  );
    
    IDDR #(
-      .DDR_CLK_EDGE("OPPOSITE_EDGE"), // "OPPOSITE_EDGE", "SAME_EDGE" 
+      .DDR_CLK_EDGE("SAME_EDGE"), // "OPPOSITE_EDGE", "SAME_EDGE" 
                                       //    or "SAME_EDGE_PIPELINED" 
       .INIT_Q1(1'b0), // Initial value of Q1: 1'b0 or 1'b1
       .INIT_Q2(1'b0), // Initial value of Q2: 1'b0 or 1'b1
       .SRTYPE("ASYNC") // Set/Reset type: "SYNC" or "ASYNC" 
    ) IDDR_inst (
-      .Q1(sdr_data[1]), // 1-bit output for positive edge of clock
-      .Q2(sdr_data[0]), // 1-bit output for negative edge of clock
-      .C(scko),   // 1-bit clock input
+      .Q1(sdr_data[0]), // 1-bit output for positive edge of clock
+      .Q2(sdr_data[1]), // 1-bit output for negative edge of clock
+      .C(scko_dly),   // 1-bit clock input
       .CE(1'b1), // 1-bit clock enable input
       .D(sdo),   // 1-bit DDR data input
-      .R(!aresetn),   // 1-bit reset
+      .R(1'b0),   // 1-bit reset
       .S(1'b0)    // 1-bit set
    );
-   
+
    //deserialization logic
    logic       aresetn_local;
-   assign aresetn_local = aresetn && !params_to_IP.reset;
+   always @(posedge clk)
+   begin
+      aresetn_local <= aresetn && !params_to_IP.reset;
+   end
+   
    logic reset;
    assign reset = !aresetn_local | cnv;
    logic [6:0] deser_cnt;
@@ -173,7 +203,7 @@ module LTC2333_read
    logic        latch_pulse;
    assign latch_pulse = (latch_z2 == 1'b0) && (latch_z == 1'b1);
    
-   always @(posedge scko or posedge reset)
+   always @(posedge scko_dly or posedge reset)
    begin
       deser_data_sr <= deser_data;
       

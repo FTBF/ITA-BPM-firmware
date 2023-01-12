@@ -1,1 +1,10 @@
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ITA_BPM_DAQ_i/LTC2333_read/util_ds_buf_0/U0/IBUF_OUT_*_sn_1]
+
+create_clock -period 30.000 -name {SCKO_P[0]]} -waveform {0.000 15.000} [get_ports {SCKO_P[0]}]
+create_clock -period 30.000 -name {SCKO_P[1]]} -waveform {0.000 15.000} [get_ports {SCKO_P[1]}]
+create_clock -period 30.000 -name {SCKO_P[2]]} -waveform {0.000 15.000} [get_ports {SCKO_P[2]}]
+create_clock -period 30.000 -name {SCKO_P[3]} -waveform {0.000 15.000} [get_ports {SCKO_P[3]}]
+create_clock -period 30.000 -name {SCKO_P[4]]} -waveform {0.000 15.000} [get_ports {SCKO_P[4]}]
+create_clock -period 30.000 -name {SCKO_P[5]} -waveform {0.000 15.000} [get_ports {SCKO_P[5]}]
+create_clock -period 30.000 -name {SCKO_P[6]} -waveform {0.000 15.000} [get_ports {SCKO_P[6]}]
+create_clock -period 30.000 -name {SCKO_P[7]]} -waveform {0.000 15.000} [get_ports {SCKO_P[7]}]

@@ -110,18 +110,20 @@ ITA_BPM_DAQ_wrapper dut
     SDO_P);
 
    logic [7:0] scko;
-   assign {scko_0, scko_1, scko_2, scko_3, scko_4, scko_5, scko_6, scko_7} = scko;
+   assign SCKO_P = scko;
+   assign SCKO_N = ~scko;
    logic [7:0] sdo;
-   assign {sdo_0, sdo_1, sdo_2, sdo_3, sdo_4, sdo_5, sdo_6, sdo_7} = sdo;
+   assign SDO_P = sdo;
+   assign SDO_N = ~sdo;
 
    generate
       for(genvar i = 0; i < 8; i += 1)
       begin
          LTC2333_digitalModel ltc2333
                   (
-                   .cnv(cnv),
-                   .scki(scki),
-                   .sdi(sdi),
+                   .cnv(CNV),
+                   .scki(SCKI_P),
+                   .sdi(SDI_P),
                    .busy(),
                    .scko(scko[i]),
                    .sdo(sdo[i])
@@ -149,9 +151,10 @@ ITA_BPM_DAQ_wrapper dut
 
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h41200000,4, 32'hFFFFFFFF, resp);
 
-      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10004,4, 32'h000001ff, resp);
-      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c1000c,4, 32'h00000010, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10004,4, 32'h000000ff, resp);
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c00000,4, 32'h00000002, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
       #50000;
 
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.read_data(32'h43c00000+4*1+16*0,4,read_data,resp);

@@ -45,7 +45,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">IPIF_Bus2IP_resetn</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">IPIF_Bus2IP_resetn:aresetn</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -67,7 +67,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>POLARITY</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.IPIF_BUS2IP_RESETN.POLARITY" spirit:choiceRef="choice_list_74b5137e">ACTIVE_LOW</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.IPIF_BUS2IP_RESETN.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -207,12 +207,15 @@
         <spirit:language>SystemVerilog</spirit:language>
         <spirit:modelName>LTC2333_write</spirit:modelName>
         <spirit:fileSetRef>
+          <spirit:localName>xilinx_anylanguagesynthesis_baylor_edu_IPIF_common_IPIF_common_1_0__ref_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagesynthesis_view_fileset</spirit:localName>
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>41cee274</spirit:value>
+            <spirit:value>a2ff4db8</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -228,7 +231,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>41cee274</spirit:value>
+            <spirit:value>8cf45378</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -250,6 +253,19 @@
     <spirit:ports>
       <spirit:port>
         <spirit:name>clk</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>clk_ps</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -525,6 +541,10 @@
         <spirit:name>scki</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>wire</spirit:typeName>
@@ -538,6 +558,10 @@
         <spirit:name>sdi</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>reg</spirit:typeName>
@@ -583,11 +607,6 @@
   </spirit:model>
   <spirit:choices>
     <spirit:choice>
-      <spirit:name>choice_list_74b5137e</spirit:name>
-      <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
-      <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
-    </spirit:choice>
-    <spirit:choice>
       <spirit:name>choice_list_9d8b0d81</spirit:name>
       <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
       <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
@@ -597,7 +616,7 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write.sv</spirit:name>
+        <spirit:name>hdl/LTC2333-write.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_20479824</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -611,15 +630,25 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write_impl.sv</spirit:name>
+        <spirit:name>hdl/LTC2333-write_impl.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_f64157bb</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_7f0c6106</spirit:userFileType>
       </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_anylanguagesynthesis_baylor_edu_IPIF_common_IPIF_common_1_0__ref_view_fileset</spirit:name>
+      <spirit:vendorExtensions>
+        <xilinx:subCoreRef>
+          <xilinx:componentRef xilinx:vendor="baylor.edu" xilinx:library="IPIF_common" xilinx:name="IPIF_common" xilinx:version="1.0">
+            <xilinx:mode xilinx:name="copy_mode"/>
+          </xilinx:componentRef>
+        </xilinx:subCoreRef>
+      </spirit:vendorExtensions>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write.sv</spirit:name>
+        <spirit:name>hdl/LTC2333-write.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -632,7 +661,11 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../../designs/LTC2333-write/hdl/LTC2333-write_impl.sv</spirit:name>
+        <spirit:name>hdl/LTC2333-write_impl.sv</spirit:name>
+        <spirit:fileType>systemVerilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>../../hdl/LTC2333_digitalModel.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>
@@ -715,16 +748,59 @@
       </xilinx:taxonomies>
       <xilinx:displayName>LTC2333_write_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>3</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2022-09-23T19:53:10Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>5</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-01-11T19:37:27Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6d30af35_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7454d9f2_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@54f8e7a7_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7095bea_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5b072a82_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4325b2ce_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@dd28f10_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@11abf1f5_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@633701f8_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@364fbf7c_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@125658e8_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2573c12c_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b3182fb_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@26a1d20f_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3445a6b5_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1796029e_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@383c9a31_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@726467c1_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@769b5c2_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c2504db_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@497e50ec_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6458b314_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@387aa215_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@37f3606c_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6abf67ab_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6ed8277b_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4549a361_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@442d5f72_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@432ce2c9_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1d1599f2_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@349d2a66_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@69780198_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@282877a7_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a06de16_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@38f32e8e_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@11d48343_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1fe0d59b_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a243d93_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31d0d7ba_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@785a766e_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53c5134e_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@41c0b9_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b20946c_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="cb2d841b"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="2b37d064"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="011e1be7"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b00fce18"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="97ca6a47"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="c76cb228"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f497bf47"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="6eddb263"/>
     </xilinx:packagingInfo>
