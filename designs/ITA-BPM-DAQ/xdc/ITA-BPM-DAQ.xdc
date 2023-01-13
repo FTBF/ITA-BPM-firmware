@@ -44,8 +44,8 @@ set_property -dict { IOSTANDARD LVDS_25   DIFF_TERM TRUE} [get_ports { SCKI* }];
 set_property -dict { IOSTANDARD LVDS_25 } [get_ports { SCKO* }];
 set_property -dict { IOSTANDARD LVDS_25   DIFF_TERM TRUE } [get_ports { SDI* }];
 set_property -dict { IOSTANDARD LVDS_25 } [get_ports { SDO* }];
-set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { Busy* }];
-set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { CNV* }];
+set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW   DRIVE 8} [get_ports { Busy* }];
+set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW   DRIVE 8} [get_ports { CNV* }];
 set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { SCL* }];
 set_property -dict { IOSTANDARD LVCMOS25   SLEW SLOW} [get_ports { SDA* }];
 #set_property -dict { PACKAGE_PIN N20  } [get_ports { syzygy_a_c2p_clk_n }]; #IO_L14N_T2_SRCC Sch=syzygy_a_c2p_clk_n
