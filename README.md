@@ -152,19 +152,42 @@ The activate the following module
 
 Ensure that the box has a `M` and not a `*` so that petalinux will build the I2C Controller as a kernal module which can be imported into ubuntu.  Also make sure to rebuild the petalinux project after this change is made
 
-##### Installing kwenl modules 
+##### Installing kernel modules 
 
 petalinux places a copy of the kernel modules it builds in
 
 ```build/tmp/work/plnx_zynq7-xilinx-linux-gnueabi/linux-xlnx/4.19-xilinx-v2019.2+git999-r0/image/lib/modules/4.19.0-xilinx-v2019.2```
 
-This folder should be coppied into the `/lib/modules`.  Make sure that the file and folder ownership is set to root.  You will need to run the command `sudo depmod` to update the list of modules.  In order for the uio module to be recognized and loaded during the dtbo loading you will need to create a `modprobe.d` config file `/lib/modprobe.d/uio-pdrv-genirq.conf` with the following contents
+This folder should be coppied into the `/lib/modules`.  Make sure that the file and folder ownership is set to root.  You will need to run the command `sudo depmod -a` to update the list of modules.  In order for the uio module to be recognized and loaded during the dtbo loading you will need to create a `modprobe.d` config file `/lib/modprobe.d/uio-pdrv-genirq.conf` with the following contents
 
 ```options uio_pdrv_genirq of_id="linux,uio-pdrv-genirq"```
 
 Similarly for the AXI I2C device make a file `/lib/modprobe.d/i2c-xiic.conf` with the contents
 
 ```options i2c-xiic of_id="xlnx,xps-iic-2.00.a"```
+
+Finally to load the modules on boot an estry for each module must be added to `/etc/modules` as follows
+
+```
+uio_pdrv_genirq
+i2c-xiic
+```
+
+And run `sudo update-initramfs -u`
+
+### Accessing uio without root privileges
+
+To access uio devices without root access create the following file '/etc/udev/rules.d/99-uio.rules' with contents
+
+```SUBSYSTEM=="uio", GROUP="uiousr", MODE="660"```
+
+Then create the `uiousr` user with 
+
+```sudo groupadd uiousr```
+
+and add the desired user to the group with 
+
+```sudo usermod -a -G uiousr [username]```
 
 #### Fix to load sshd faster on boot
 

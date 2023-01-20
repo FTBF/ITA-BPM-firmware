@@ -21,3 +21,6 @@ designs/**/bd/**
 
 *.xci
 *.xcix
+
+*.hex
+*.out
