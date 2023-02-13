@@ -4,3 +4,6 @@
 [submodule "shared/ip_repo/utilityip"]
 	path = shared/ip_repo/utilityip
 	url = git@github.com:FTBF/UtilityIP.git
+[submodule "syzygy-DNA-firmware/USIWire"]
+	path = syzygy-DNA-firmware/USIWire
+	url = git@github.com:puuu/USIWire.git
