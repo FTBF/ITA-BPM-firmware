@@ -60,6 +60,8 @@ module LTC2333_write #(
                          );
 
 
+   logic readInProgress;
+   
    //decode configuration parameters from IPIF bus 
    assign IPIF_IP2Bus_Error = 0;
    
@@ -76,7 +78,8 @@ module LTC2333_write #(
       logic                  mode;
       logic [7:0]            active_channels;
       // Register 0
-      logic [30:0]           padding0;
+      logic [29:0]           padding0;
+      logic                  readInProgress;
       logic                  reset;
    } param_t;
    
@@ -87,6 +90,7 @@ module LTC2333_write #(
    
    always_comb begin
       params_from_IP = params_to_IP;
+      params_from_IP.readInProgress = readInProgress;
       //More efficient to explicitely zero padding 
       params_from_IP.padding3   = '0;
       params_from_IP.padding1_1 = '0;
@@ -147,7 +151,8 @@ module LTC2333_write #(
                           //IPIF interface
                           //configuration parameter interface 
                           .params(params_to_IP),
-                          
+                          .readInProgress(readInProgress),
+                                             
                           // inputs
                           .busy(busy),
 

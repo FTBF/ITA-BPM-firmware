@@ -39,6 +39,7 @@ module LTC2333_write_impl #(
                          //IPIF interface
                          //configuration parameter interface 
                          input             PARAM_T params,
+                         input reg         readInProgress,
                          
                          // inputs
                          input wire        busy,
@@ -155,9 +156,12 @@ module LTC2333_write_impl #(
          sampling_delay <= 0;
          data <= 0;
          state <= RESET;
+         readInProgress <= 1;
       end
       else
       begin
+         readInProgress <= n_reads_remaining > 0 || state != IDLE;
+         
          case(state)
            RESET:
            begin
