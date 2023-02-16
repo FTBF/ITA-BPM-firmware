@@ -152,6 +152,20 @@ The activate the following module
 
 Ensure that the box has a `M` and not a `*` so that petalinux will build the I2C Controller as a kernal module which can be imported into ubuntu.  Also make sure to rebuild the petalinux project after this change is made
 
+##### Compile u-dma-buf module
+
+The `u-dma-buf` module source is located here
+
+https://github.com/ikwzm/udmabuf
+
+The module can be compiled in petalinux following the recipe below (based on [this](https://www.bastibl.net/futuresdr-2/))
+
+1. in petalinux project run `petalinux-create -t modules --name u-dma-buf --enable`
+2. copy source files from git repo to ./project-spec/meta-user/recipes-modules/u-dma-buf/files
+3. run `petalinux-build`
+4. compiled module file is located here `./build/tmp/sysroots-components/plnx_zynq7/u-dma-buf/lib/modules/4.19.0-xilinx/extra/u-dma-buf.ko`
+5. Copy this file into rootfs and place in `/lib/modules/4.19.0-xilinx-v2019.2/kernel/drivers/u-dma-buf/`
+
 ##### Installing kernel modules 
 
 petalinux places a copy of the kernel modules it builds in
@@ -166,16 +180,21 @@ Similarly for the AXI I2C device make a file `/lib/modprobe.d/i2c-xiic.conf` wit
 
 ```options i2c-xiic of_id="xlnx,xps-iic-2.00.a"```
 
+And for the u-dma-buf module create `/lib/modprobe.d/u-dma-buf.conf` with the contents
+
+```options u-dma-buf udmabuf0=0x800000 udmabuf1=65536```
+
 Finally to load the modules on boot an estry for each module must be added to `/etc/modules` as follows
 
 ```
 uio_pdrv_genirq
 i2c-xiic
+u-dma-buf
 ```
 
 And run `sudo update-initramfs -u`
 
-### Accessing uio without root privileges
+### Accessing uio and u-dma-buf modules without root privileges
 
 To access uio devices without root access create the following file '/etc/udev/rules.d/99-uio.rules' with contents
 
@@ -188,6 +207,11 @@ Then create the `uiousr` user with
 and add the desired user to the group with 
 
 ```sudo usermod -a -G uiousr [username]```
+
+For access to the u-dma-buf buffers create `/etc/udev/rules.d/99-u-dma-buf.rules` with contents
+
+SUBSYSTEM=="u-dma-buf", GROUP="uiousr", MODE="660"
+SUBSYSTEM=="u-dma-buf", RUN+="/bin/chgrp -R uiousr /sys/%p"
 
 #### Fix to load sshd faster on boot
 
