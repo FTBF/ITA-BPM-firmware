@@ -56,7 +56,9 @@ module LTC2333_write #(
                          // outputs
                          output reg                                   cnv,
                          output wire [1:0]                            scki,
-                         output reg [1:0]                             sdi
+                         output reg [1:0]                             sdi,
+
+                         output wire                                  timetrig
                          );
 
 
@@ -97,6 +99,8 @@ module LTC2333_write #(
       params_from_IP.padding1_2 = '0;
       params_from_IP.padding0   = '0;
    end
+
+   assign timetrig = params_to_IP.reset;
    
    IPIF_parameterDecode#(
                          .C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),

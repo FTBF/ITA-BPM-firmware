@@ -215,7 +215,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>a2ff4db8</spirit:value>
+            <spirit:value>d4bdcaf4</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -231,7 +231,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>8cf45378</spirit:value>
+            <spirit:value>2bfb05c2</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -571,6 +571,19 @@
           </spirit:wireTypeDefs>
         </spirit:wire>
       </spirit:port>
+      <spirit:port>
+        <spirit:name>timetrig</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
     </spirit:ports>
     <spirit:modelParameters>
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
@@ -622,17 +635,9 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../utilityip/IPIF_common/IPIF_clock_converter.sv</spirit:name>
-        <spirit:fileType>systemVerilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>../utilityip/IPIF_common/IPIF_parameterDecode.sv</spirit:name>
-        <spirit:fileType>systemVerilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>hdl/LTC2333-write_impl.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_7f0c6106</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_d5b6485f</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -651,14 +656,6 @@
         <spirit:name>hdl/LTC2333-write.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>../utilityip/IPIF_common/IPIF_clock_converter.sv</spirit:name>
-        <spirit:fileType>systemVerilogSource</spirit:fileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>../utilityip/IPIF_common/IPIF_parameterDecode.sv</spirit:name>
-        <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>hdl/LTC2333-write_impl.sv</spirit:name>
@@ -748,8 +745,11 @@
       </xilinx:taxonomies>
       <xilinx:displayName>LTC2333_write_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>5</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2023-01-11T19:37:27Z</xilinx:coreCreationDateTime>
+      <xilinx:xpmLibraries>
+        <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
+      </xilinx:xpmLibraries>
+      <xilinx:coreRevision>6</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-02-21T19:22:04Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@6d30af35_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@7454d9f2_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
@@ -794,13 +794,24 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@53c5134e_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@41c0b9_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@3b20946c_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@3a5d0917_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@26b67ae4_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@156cc180_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@5ff0dd5_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@2b10fa0d_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@6748a0cc_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@34719e77_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@140f63bb_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@76ef7400_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@1e724065_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.df@698b7903_ARCHIVE_LOCATION">/home/pastika/ITADiode/ITA-BPM-firmware/shared/ip_repo/LTC2333-write</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2019.2</xilinx:xilinxVersion>
+      <xilinx:xilinxVersion>2021.2</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b00fce18"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="97ca6a47"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="c76cb228"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="74159397"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="11b86318"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f497bf47"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="6eddb263"/>
     </xilinx:packagingInfo>

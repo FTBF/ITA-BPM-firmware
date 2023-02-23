@@ -711,6 +711,9 @@
           },
           "clk_ps": {
             "direction": "I"
+          },
+          "timetrig": {
+            "direction": "O"
           }
         },
         "components": {
@@ -820,6 +823,12 @@
             "ports": [
               "LTC2333_write_0/sdi",
               "util_ds_buf_0/OBUF_IN"
+            ]
+          },
+          "LTC2333_write_0_timetrig": {
+            "ports": [
+              "LTC2333_write_0/timetrig",
+              "timetrig"
             ]
           },
           "Op1_0_1": {
@@ -1242,7 +1251,7 @@
           },
           "axi_interconnect_1": {
             "vlnv": "xilinx.com:ip:axi_interconnect:2.1",
-            "xci_name": "ITA_BPM_DAQ_axi_interconnect_0_3",
+            "xci_name": "ITA_BPM_DAQ_axi_interconnect_1_0",
             "parameters": {
               "NUM_MI": {
                 "value": "6"
@@ -1415,7 +1424,7 @@
             "components": {
               "xbar": {
                 "vlnv": "xilinx.com:ip:axi_crossbar:2.1",
-                "xci_name": "ITA_BPM_DAQ_xbar_2",
+                "xci_name": "ITA_BPM_DAQ_xbar_0",
                 "parameters": {
                   "NUM_MI": {
                     "value": "6"
@@ -2202,6 +2211,9 @@
             "direction": "I",
             "left": "7",
             "right": "0"
+          },
+          "timetrig": {
+            "direction": "I"
           }
         },
         "components": {
@@ -2265,6 +2277,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -2370,6 +2385,12 @@
                 "ports": [
                   "s00_axi_aresetn",
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
+                ]
+              },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
                 ]
               },
               "xlslice_7_Dout": {
@@ -3870,6 +3891,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -3995,6 +4019,12 @@
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
                 ]
               },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
+                ]
+              },
               "xlslice_4_Dout": {
                 "ports": [
                   "xlslice_4/Dout",
@@ -4057,6 +4087,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -4182,6 +4215,12 @@
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
                 ]
               },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
+                ]
+              },
               "xlslice_11_Dout": {
                 "ports": [
                   "xlslice_11/Dout",
@@ -4244,6 +4283,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -4369,6 +4411,12 @@
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
                 ]
               },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
+                ]
+              },
               "xlslice_12_Dout": {
                 "ports": [
                   "xlslice_12/Dout",
@@ -4431,6 +4479,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -4556,6 +4607,12 @@
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
                 ]
               },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
+                ]
+              },
               "xlslice_13_Dout": {
                 "ports": [
                   "xlslice_13/Dout",
@@ -4618,6 +4675,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -4743,6 +4803,12 @@
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
                 ]
               },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
+                ]
+              },
               "xlslice_14_Dout": {
                 "ports": [
                   "xlslice_14/Dout",
@@ -4805,6 +4871,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -4930,6 +4999,12 @@
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
                 ]
               },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
+                ]
+              },
               "xlslice_15_Dout": {
                 "ports": [
                   "xlslice_15/Dout",
@@ -4992,6 +5067,9 @@
                 "direction": "I",
                 "left": "7",
                 "right": "0"
+              },
+              "timetrig": {
+                "direction": "I"
               }
             },
             "components": {
@@ -5115,6 +5193,12 @@
                 "ports": [
                   "s00_axi_aresetn",
                   "AXI_Full_IPIF_0/s00_axi_aresetn"
+                ]
+              },
+              "timetrig_1": {
+                "ports": [
+                  "timetrig",
+                  "LTC2333_read_0/timetrig"
                 ]
               },
               "xlslice_0_Dout": {
@@ -5457,6 +5541,19 @@
               "ps7_0_axi_periph1/M07_ARESETN",
               "ps7_0_axi_periph1/S00_ARESETN",
               "ps7_0_axi_periph1/M08_ARESETN"
+            ]
+          },
+          "timetrig_1": {
+            "ports": [
+              "timetrig",
+              "LTC233_read_block_0/timetrig",
+              "LTC233_read_block_2/timetrig",
+              "LTC233_read_block_1/timetrig",
+              "LTC233_read_block_3/timetrig",
+              "LTC233_read_block_4/timetrig",
+              "LTC233_read_block_5/timetrig",
+              "LTC233_read_block_6/timetrig",
+              "LTC233_read_block_7/timetrig"
             ]
           },
           "util_ds_buf_1_IBUF_OUT": {
@@ -5828,6 +5925,12 @@
         "ports": [
           "LTC2333_write/dout_0",
           "CNV"
+        ]
+      },
+      "LTC2333_write_timetrig": {
+        "ports": [
+          "LTC2333_write/timetrig",
+          "LTC2333_read/timetrig"
         ]
       },
       "Net": {

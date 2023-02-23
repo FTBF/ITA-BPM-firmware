@@ -31,6 +31,8 @@ module LTC2333_read
     input logic                                  clk,
     input logic                                  aresetn,
 
+    input logic                                  timetrig,
+
     input logic                                  cnv,
     input logic                                  scko,
     input logic                                  sdo,
@@ -74,7 +76,8 @@ module LTC2333_read
       // Register 1
       logic [31:0]      fifo_occ;
       // Register 0
-      logic [29:0]      padding0;
+      logic [28:0]      padding0;
+      logic             time_reset;
       logic             enable;
       logic             reset;
    } param_t;
@@ -102,7 +105,7 @@ module LTC2333_read
      .N_REG(N_REG),
      .PARAM_T(param_t),
      .DEFAULTS({32'h0, 32'd0, 32'h0, 32'b0}),
-     .SELF_RESET(128'b1)
+     .SELF_RESET(128'b101)
      ) parameterDecoder 
    (
     .clk(IPIF_clk),
@@ -232,6 +235,55 @@ module LTC2333_read
                         .dest_clk(clk), // 1-bit input: Clock signal for the destination clock domain.
                         .src_in(latch)      // 1-bit input: Input signal to be synchronized to dest_clk domain.
                         );
+
+   logic [65:0] counter = 0;
+   logic        time_reset_last = 0;
+   always @(posedge clk)
+   begin
+      time_reset_last <= params_to_IP.time_reset; 
+      if(time_reset_last == 1'b0 && params_to_IP.time_reset == 1'b1) counter <= 0;
+      else                                                           counter <= counter + 1;
+   end
+
+   logic [31:0] outputVal;
+   logic [1:0]  data_mux_val;
+   logic        time_write;
+   
+   always_comb
+   begin
+      case(data_mux_val)
+        0:       outputVal = counter[33:2];
+        1:       outputVal = counter[65:34];
+        default: outputVal = {counter[18:2],deser_data[23:8], deser_data[5:3]};
+      endcase
+   end
+   
+   enum {RESET, WRITE1, WRITE2, IDLE} state;
+   logic wr_rst_busy;
+   logic aresetn_sm;
+   logic timetrig_latch;
+   logic timetrig_z;
+   always @(posedge clk)
+   begin
+      timetrig_z <= timetrig;
+      if(!aresetn_sm)
+      begin
+         aresetn_sm <= 1;
+         timetrig_latch <= 0;
+      end
+      else
+      begin
+         if(!timetrig_z && timetrig) timetrig_latch <= 1'b1;
+         
+         if( (timetrig_latch) && !wr_rst_busy )
+         begin
+            aresetn_sm <= 0;
+         end
+      end
+      
+   end
+
+   
    always @(posedge clk or negedge aresetn_local)
    begin
       if(!aresetn_local)
@@ -242,9 +294,48 @@ module LTC2333_read
       begin
          latch_z2 <= latch_z;
       end
+   end
+   
+   
+   always @(posedge clk or negedge aresetn_sm)
+   begin
+      if(!aresetn_sm)
+      begin
+         state <= RESET;
+         data_mux_val <= 2;
+         time_write <= 0;
+      end
+      else
+      begin
+
+         case(state)
+           RESET:
+           begin
+              state <= WRITE1;
+              data_mux_val <= 2;
+              time_write <= 0;
+           end
+           WRITE1:
+           begin
+              state <= WRITE2;
+              data_mux_val <= 0;
+              time_write <= 1;
+           end
+           WRITE2:
+           begin
+              state <= IDLE;
+              data_mux_val <= 1;
+              time_write <= 1;
+           end
+           IDLE:
+           begin
+              data_mux_val <= 2;
+              time_write <= 0;
+           end
+         endcase // case (state)         
+      end
    end // always @ (posedge clk or negedge aresetn_local)
    
-
    logic empty;
    assign FIFO_notEmpty = !empty;
    xpm_fifo_async 
@@ -285,8 +376,8 @@ module LTC2333_read
     .underflow(),         // 1-bit output: Underflow: Indicates that the read request (rd_en) during
     .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
     .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
-    .wr_rst_busy(),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
-    .din({8'h0,deser_data}),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
+    .wr_rst_busy(wr_rst_busy),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
+    .din(outputVal),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
     .injectdbiterr(1'b0), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
     .injectsbiterr(1'b0), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
     .rd_clk(FIFO_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free
@@ -294,7 +385,7 @@ module LTC2333_read
     .rst(!aresetn_local),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
     .sleep(1'b0),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
     .wr_clk(clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
-    .wr_en(!FIFO_write_block && params_to_IP.enable && latch_pulse)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
+    .wr_en(!FIFO_write_block && params_to_IP.enable && (time_write || latch_pulse))                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
     );
 
 endmodule
