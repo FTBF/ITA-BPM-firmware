@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module LTC2333_read
+module LTCTimer
 #(
   parameter FIFO_MAX_SIZE = 4096,
   parameter integer C_S_AXI_DATA_WIDTH = 32,
@@ -31,11 +31,7 @@ module LTC2333_read
     input logic                                  clk,
     input logic                                  aresetn,
 
-    input logic                                  timetrig,
-
     input logic                                  cnv,
-    input logic                                  scko,
-    input logic                                  sdo,
 
     //IPIF interface
     //configuration parameter interface
@@ -76,8 +72,7 @@ module LTC2333_read
       // Register 1
       logic [31:0]      fifo_occ;
       // Register 0
-      logic [28:0]      padding0;
-      logic             time_reset;
+      logic [29:0]      padding0;
       logic             enable;
       logic             reset;
    } param_t;
@@ -95,7 +90,6 @@ module LTC2333_read
       params_from_IP.padding2   = '0;
       params_from_IP.padding0   = '0;
 
-      params_to_bus = params_overlay;
       params_to_bus.fifo_occ = FIFO_rd_count;
    end
    
@@ -138,125 +132,26 @@ module LTC2333_read
     .params_to_bus(params_overlay)
     );
 
-   
-   //SDO is DDR w.r.t. scko
-   logic [1:0] sdr_data;
-   logic       scko_dly;
+   logic [65:0] counter = 0;
+   logic        reset_last = 0;
+   logic        cnv_last;
+   logic        time_write;
+   assign time_write = cnv && !cnv_last;
 
-   IDELAYE2 #(
-              .CINVCTRL_SEL("FALSE"),          // Enable dynamic clock inversion (FALSE, TRUE)
-              .DELAY_SRC("IDATAIN"),           // Delay input (IDATAIN, DATAIN)
-              .HIGH_PERFORMANCE_MODE("FALSE"), // Reduced jitter ("TRUE"), Reduced power ("FALSE")
-              .IDELAY_TYPE("FIXED"),           // FIXED, VARIABLE, VAR_LOAD, VAR_LOAD_PIPE
-              .IDELAY_VALUE(31),                // Input delay tap setting (0-31)
-              .PIPE_SEL("FALSE"),              // Select pipelined mode, FALSE, TRUE
-              .REFCLK_FREQUENCY(200.0),        // IDELAYCTRL clock input frequency in MHz (190.0-210.0, 290.0-310.0).
-              .SIGNAL_PATTERN("DATA")          // DATA, CLOCK input signal
-              )
-   IDELAYE2_inst (
-                  .CNTVALUEOUT(), // 5-bit output: Counter value output
-                  .DATAOUT(scko_dly),         // 1-bit output: Delayed data output
-                  .C(1'b0),                     // 1-bit input: Clock input
-                  .CE(1'b1),                   // 1-bit input: Active high enable increment/decrement input
-                  .CINVCTRL(1'b0),       // 1-bit input: Dynamic clock inversion input
-                  .CNTVALUEIN(5'b0),   // 5-bit input: Counter value input
-                  .DATAIN(1'b0),           // 1-bit input: Internal delay data input
-                  .IDATAIN(scko),         // 1-bit input: Data input from the I/O
-                  .INC(1'b0),                 // 1-bit input: Increment / Decrement tap delay input
-                  .LD(1'b0),                   // 1-bit input: Load IDELAY_VALUE input
-                  .LDPIPEEN(1'b0),       // 1-bit input: Enable PIPELINE register to load data input
-                  .REGRST(1'b0)            // 1-bit input: Active-high reset tap-delay input
-                  );
-   
-   IDDR #(
-      .DDR_CLK_EDGE("SAME_EDGE"), // "OPPOSITE_EDGE", "SAME_EDGE" 
-                                      //    or "SAME_EDGE_PIPELINED" 
-      .INIT_Q1(1'b0), // Initial value of Q1: 1'b0 or 1'b1
-      .INIT_Q2(1'b0), // Initial value of Q2: 1'b0 or 1'b1
-      .SRTYPE("ASYNC") // Set/Reset type: "SYNC" or "ASYNC" 
-   ) IDDR_inst (
-      .Q1(sdr_data[0]), // 1-bit output for positive edge of clock
-      .Q2(sdr_data[1]), // 1-bit output for negative edge of clock
-      .C(scko_dly),   // 1-bit clock input
-      .CE(1'b1), // 1-bit clock enable input
-      .D(sdo),   // 1-bit DDR data input
-      .R(1'b0),   // 1-bit reset
-      .S(1'b0)    // 1-bit set
-   );
+   always @(posedge clk)
+   begin
+      reset_last <= params_to_IP.reset;
+      cnv_last <= cnv;
+      if(reset_last == 1'b0 && params_to_IP.reset == 1'b1) counter <= 0;
+      else                                                 counter <= counter + 1;
+   end
 
-   //deserialization logic
    logic       aresetn_local;
    always @(posedge clk)
    begin
       aresetn_local <= aresetn && !params_to_IP.reset;
    end
-   
-   logic reset;
-   assign reset = !aresetn_local | cnv;
-   logic [6:0] deser_cnt;
-   logic [23:0] deser_data_sr;
-   
 
-   logic [23:0] deser_data;
-   assign deser_data = {deser_data_sr[21:0], sdr_data};
-
-   logic        latch;
-   logic        latch_z;
-   logic        latch_z2;
-   logic        latch_pulse;
-   assign latch_pulse = (latch_z2 == 1'b0) && (latch_z == 1'b1);
-   
-   always @(posedge scko_dly or posedge reset)
-   begin
-      deser_data_sr <= deser_data;
-      
-      if(reset)
-      begin
-         deser_cnt <= 0;
-         latch <= 0;
-      end
-      else
-      begin
-         deser_cnt <= deser_cnt + 1;
-
-         if(deser_cnt == 'hb) latch <= 1;
-         else                 latch <= 0;
-      end
-   end // always @ (posedge scko or posedge reset)
-
-   xpm_cdc_single #(
-                    .DEST_SYNC_FF(2),   // DECIMAL; range: 2-10
-                    .INIT_SYNC_FF(1),   // DECIMAL; 0=disable simulation init values, 1=enable simulation init values
-                    .SIM_ASSERT_CHK(0), // DECIMAL; 0=disable simulation messages, 1=enable simulation messages
-                    .SRC_INPUT_REG(0)   // DECIMAL; 0=do not register input, 1=register input
-                    )
-   xpm_cdc_single_inst (
-                        .dest_out(latch_z), // 1-bit output: src_in synchronized to the destination clock domain. This output is
-                        .dest_clk(clk), // 1-bit input: Clock signal for the destination clock domain.
-                        .src_in(latch)      // 1-bit input: Input signal to be synchronized to dest_clk domain.
-                        );
-
-   logic [65:0] counter = 0;
-   logic        time_reset_last = 0;
-   always @(posedge clk)
-   begin
-      time_reset_last <= params_to_IP.time_reset; 
-      if(time_reset_last == 1'b0 && params_to_IP.time_reset == 1'b1) counter <= 0;
-      else                                                           counter <= counter + 1;
-   end
-
-   always @(posedge clk or negedge aresetn_local)
-   begin
-      if(!aresetn_local)
-      begin
-         latch_z2 <= '0;
-      end
-      else
-      begin
-         latch_z2 <= latch_z;
-      end
-   end
-      
    logic empty;
    assign FIFO_notEmpty = !empty;
    xpm_fifo_async 
@@ -264,7 +159,7 @@ module LTC2333_read
      .CDC_SYNC_STAGES(2),       // DECIMAL
      .DOUT_RESET_VALUE("0"),    // String
      .ECC_MODE("no_ecc"),       // String
-     .FIFO_MEMORY_TYPE("auto"), // String
+     .FIFO_MEMORY_TYPE("block"), // String
      .FIFO_READ_LATENCY(1),     // DECIMAL
      .FIFO_WRITE_DEPTH(FIFO_MAX_SIZE),   // DECIMAL
      .FULL_RESET_VALUE(0),      // DECIMAL
@@ -277,7 +172,7 @@ module LTC2333_read
      .SIM_ASSERT_CHK(1),        // DECIMAL; 0=disable simulation messages, 1=enable simulation messages
      .USE_ADV_FEATURES("0404"), // String
      .WAKEUP_TIME(0),           // DECIMAL
-     .WRITE_DATA_WIDTH(32),     // DECIMAL
+     .WRITE_DATA_WIDTH(64),     // DECIMAL
      .WR_DATA_COUNT_WIDTH($clog2(FIFO_MAX_SIZE) + 1)    // DECIMAL
      ) xpm_fifo_async_data 
    (
@@ -298,7 +193,7 @@ module LTC2333_read
     .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
     .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
     .wr_rst_busy(wr_rst_busy),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
-    .din({8'b0, deser_data}),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
+    .din(counter[64:1]),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
     .injectdbiterr(1'b0), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
     .injectsbiterr(1'b0), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
     .rd_clk(FIFO_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free
@@ -306,7 +201,7 @@ module LTC2333_read
     .rst(!aresetn_local),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
     .sleep(1'b0),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
     .wr_clk(clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
-    .wr_en(!FIFO_write_block && params_to_IP.enable && latch_pulse)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
+    .wr_en(!FIFO_write_block && params_to_IP.enable && time_write)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
     );
 
 endmodule

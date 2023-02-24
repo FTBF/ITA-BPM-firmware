@@ -23,3 +23,9 @@ LTC2333-read:
   boardPart: digilentinc.com:eclypse-z7:part0:1.1
   device: xc7z020clg484-1
   processor: ps7_cortexa9_0
+
+LTCTimer:
+  primaryFilelist: designs/LTCTimer/filelist.yml
+  boardPart: digilentinc.com:eclypse-z7:part0:1.1
+  device: xc7z020clg484-1
+  processor: ps7_cortexa9_0
