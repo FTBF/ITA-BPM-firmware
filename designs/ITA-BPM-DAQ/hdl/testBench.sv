@@ -157,6 +157,8 @@ ITA_BPM_DAQ_wrapper dut
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
       #200000;
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
+      #2000;
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
 
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.read_data(32'h43c00000+4*1+16*0,4,read_data,resp);
       $display("read_data:", read_data);

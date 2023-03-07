@@ -71,9 +71,24 @@ module LTC2333_write_impl #(
    logic [15:0] busy_delay;
    logic [31:0] sampling_delay;
    logic        local_aresetn;
+   logic        reset_latch = 0;
+   logic        reset_last = 0;
    logic [1:0]  sdi_ddr;
 
-   assign local_aresetn = aresetn && !params.reset;
+   always @(posedge clk)
+   begin
+      reset_last <= params.reset;
+      if(!local_aresetn)
+      begin
+         reset_latch <= 0;
+      end
+      else if(params.reset && !reset_last)
+      begin
+         reset_latch <= 1;
+      end
+   end
+
+   assign local_aresetn = aresetn && !(!readInProgress && reset_latch);
 
    //assign data = {2'b10, ctrl_ptr[2:0], params.range};
    //assign busy_delay = BUSY_TIME/CLOCK_PERIOD;
@@ -156,7 +171,7 @@ module LTC2333_write_impl #(
          sampling_delay <= 0;
          data <= 0;
          state <= RESET;
-         readInProgress <= 1;
+         readInProgress <= 0;
       end
       else
       begin
