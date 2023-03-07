@@ -55,6 +55,7 @@ module LTCTimer
     output logic [31:0]                          FIFO_dout,
 
     output logic                                 FIFO_full,
+    output logic                                 interrupt,
     input logic                                  FIFO_write_block
 
     );
@@ -68,7 +69,7 @@ module LTCTimer
       // Register 3
       logic [31:0]      padding3;
       // Register 2
-      logic [31:0]      padding2;
+      logic [31:0]      intr_depth;
       // Register 1
       logic [31:0]      fifo_occ;
       // Register 0
@@ -87,7 +88,6 @@ module LTCTimer
       params_from_IP = params_to_IP;
       //More efficient to explicitely zero padding 
       params_from_IP.padding3   = '0;
-      params_from_IP.padding2   = '0;
       params_from_IP.padding0   = '0;
 
       params_to_bus.fifo_occ = FIFO_rd_count;
@@ -131,6 +131,8 @@ module LTCTimer
     .params_to_IP(params_to_IP),
     .params_to_bus(params_overlay)
     );
+    
+   assign interrupt = FIFO_rd_count > params_to_IP.intr_depth;
 
    logic [65:0] counter = 0;
    logic        reset_last = 0;
