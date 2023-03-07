@@ -59,6 +59,7 @@ module LTC2333_read
     output logic [31:0]                          FIFO_dout,
 
     output logic                                 FIFO_full,
+    output logic                                 interrupt,
     input logic                                  FIFO_write_block
 
     );
@@ -72,7 +73,7 @@ module LTC2333_read
       // Register 3
       logic [31:0]      padding3;
       // Register 2
-      logic [31:0]      padding2;
+      logic [31:0]      intr_depth;
       // Register 1
       logic [31:0]      fifo_occ;
       // Register 0
@@ -92,7 +93,6 @@ module LTC2333_read
       params_from_IP = params_to_IP;
       //More efficient to explicitely zero padding 
       params_from_IP.padding3   = '0;
-      params_from_IP.padding2   = '0;
       params_from_IP.padding0   = '0;
 
       params_to_bus = params_overlay;
@@ -104,7 +104,7 @@ module LTC2333_read
      .C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),
      .N_REG(N_REG),
      .PARAM_T(param_t),
-     .DEFAULTS({32'h0, 32'd0, 32'h0, 32'b0}),
+     .DEFAULTS({32'h0, 32'd1, 32'h0, 32'b0}),
      .SELF_RESET(128'b101)
      ) parameterDecoder 
    (
@@ -138,6 +138,7 @@ module LTC2333_read
     .params_to_bus(params_overlay)
     );
 
+   assign interrupt = FIFO_rd_count > params_to_IP.intr_depth;
    
    //SDO is DDR w.r.t. scko
    logic [1:0] sdr_data;
