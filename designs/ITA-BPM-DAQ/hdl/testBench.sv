@@ -50,8 +50,8 @@ module testBench(
   wire [5:0]GPIO_tri_o;
   wire [1:0]SCKI_N;
   wire [1:0]SCKI_P;
-  wire [7:0]SCKO_N;
-  wire [7:0]SCKO_P;
+  reg [7:0]SCKO_N;
+  reg [7:0]SCKO_P;
   wire SCL_0;
   wire SCL_1;
   wire SDA_0;
@@ -110,8 +110,11 @@ ITA_BPM_DAQ_wrapper dut
     SDO_P);
 
    logic [7:0] scko;
-   assign SCKO_P = scko;
-   assign SCKO_N = ~scko;
+   always
+   begin
+    SCKO_P = #10 scko;
+    SCKO_N = #10 ~scko;
+   end
    logic [7:0] sdo;
    assign SDO_P = sdo;
    assign SDO_N = ~sdo;
@@ -148,14 +151,21 @@ ITA_BPM_DAQ_wrapper dut
       //Reset the PL
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.fpga_soft_reset(32'h1);
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.fpga_soft_reset(32'h0);
-
+      #200;
+      
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h41800000,32'h1c, 32'h3, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h41800000,32'h08, 32'h1ff, resp);
+      
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h41200000,4, 32'hFFFFFFFF, resp);
 
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c1000c,4, 32'h00000010, resp);
-      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10004,4, 32'h000000ff, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10004,4, 32'h000200ff, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c00008,4, 32'h00000008, resp);
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c00000,4, 32'h00000002, resp);
-      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
+      //testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
       #200000;
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
+      #2000;
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
       #2000;
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);

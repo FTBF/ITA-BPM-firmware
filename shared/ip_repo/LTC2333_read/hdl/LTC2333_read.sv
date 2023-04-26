@@ -143,7 +143,10 @@ module LTC2333_read
    //SDO is DDR w.r.t. scko
    logic [1:0] sdr_data;
    logic       scko_dly;
+   logic       sdo_dly;
+   logic       sdo_dly_tmp;
 
+   assign scko_dly = scko;
    IDELAYE2 #(
               .CINVCTRL_SEL("FALSE"),          // Enable dynamic clock inversion (FALSE, TRUE)
               .DELAY_SRC("IDATAIN"),           // Delay input (IDATAIN, DATAIN)
@@ -154,15 +157,40 @@ module LTC2333_read
               .REFCLK_FREQUENCY(200.0),        // IDELAYCTRL clock input frequency in MHz (190.0-210.0, 290.0-310.0).
               .SIGNAL_PATTERN("DATA")          // DATA, CLOCK input signal
               )
-   IDELAYE2_inst (
+   IDELAYE2_scko_inst (
                   .CNTVALUEOUT(), // 5-bit output: Counter value output
-                  .DATAOUT(scko_dly),         // 1-bit output: Delayed data output
+                  .DATAOUT(sdo_dly_tmp),         // 1-bit output: Delayed data output
                   .C(1'b0),                     // 1-bit input: Clock input
                   .CE(1'b1),                   // 1-bit input: Active high enable increment/decrement input
                   .CINVCTRL(1'b0),       // 1-bit input: Dynamic clock inversion input
                   .CNTVALUEIN(5'b0),   // 5-bit input: Counter value input
                   .DATAIN(1'b0),           // 1-bit input: Internal delay data input
-                  .IDATAIN(scko),         // 1-bit input: Data input from the I/O
+                  .IDATAIN(sdo),         // 1-bit input: Data input from the I/O
+                  .INC(1'b0),                 // 1-bit input: Increment / Decrement tap delay input
+                  .LD(1'b0),                   // 1-bit input: Load IDELAY_VALUE input
+                  .LDPIPEEN(1'b0),       // 1-bit input: Enable PIPELINE register to load data input
+                  .REGRST(1'b0)            // 1-bit input: Active-high reset tap-delay input
+                  );
+
+   IDELAYE2 #(
+              .CINVCTRL_SEL("FALSE"),          // Enable dynamic clock inversion (FALSE, TRUE)
+              .DELAY_SRC("DATAIN"),           // Delay input (IDATAIN, DATAIN)
+              .HIGH_PERFORMANCE_MODE("FALSE"), // Reduced jitter ("TRUE"), Reduced power ("FALSE")
+              .IDELAY_TYPE("FIXED"),           // FIXED, VARIABLE, VAR_LOAD, VAR_LOAD_PIPE
+              .IDELAY_VALUE(31),                // Input delay tap setting (0-31)
+              .PIPE_SEL("FALSE"),              // Select pipelined mode, FALSE, TRUE
+              .REFCLK_FREQUENCY(200.0),        // IDELAYCTRL clock input frequency in MHz (190.0-210.0, 290.0-310.0).
+              .SIGNAL_PATTERN("DATA")          // DATA, CLOCK input signal
+              )
+   IDELAYE2_sdo_inst (
+                  .CNTVALUEOUT(), // 5-bit output: Counter value output
+                  .DATAOUT(sdo_dly),         // 1-bit output: Delayed data output
+                  .C(1'b0),                     // 1-bit input: Clock input
+                  .CE(1'b1),                   // 1-bit input: Active high enable increment/decrement input
+                  .CINVCTRL(1'b0),       // 1-bit input: Dynamic clock inversion input
+                  .CNTVALUEIN(5'b0),   // 5-bit input: Counter value input
+                  .DATAIN(sdo_dly_tmp),           // 1-bit input: Internal delay data input
+                  .IDATAIN(1'b0),         // 1-bit input: Data input from the I/O
                   .INC(1'b0),                 // 1-bit input: Increment / Decrement tap delay input
                   .LD(1'b0),                   // 1-bit input: Load IDELAY_VALUE input
                   .LDPIPEEN(1'b0),       // 1-bit input: Enable PIPELINE register to load data input
@@ -170,17 +198,17 @@ module LTC2333_read
                   );
    
    IDDR #(
-      .DDR_CLK_EDGE("SAME_EDGE"), // "OPPOSITE_EDGE", "SAME_EDGE" 
+      .DDR_CLK_EDGE("OPPOSITE_EDGE"), // "OPPOSITE_EDGE", "SAME_EDGE" 
                                       //    or "SAME_EDGE_PIPELINED" 
       .INIT_Q1(1'b0), // Initial value of Q1: 1'b0 or 1'b1
       .INIT_Q2(1'b0), // Initial value of Q2: 1'b0 or 1'b1
       .SRTYPE("ASYNC") // Set/Reset type: "SYNC" or "ASYNC" 
    ) IDDR_inst (
-      .Q1(sdr_data[0]), // 1-bit output for positive edge of clock
-      .Q2(sdr_data[1]), // 1-bit output for negative edge of clock
+      .Q1(sdr_data[1]), // 1-bit output for positive edge of clock
+      .Q2(sdr_data[0]), // 1-bit output for negative edge of clock
       .C(scko_dly),   // 1-bit clock input
       .CE(1'b1), // 1-bit clock enable input
-      .D(sdo),   // 1-bit DDR data input
+      .D(sdo_dly),   // 1-bit DDR data input
       .R(1'b0),   // 1-bit reset
       .S(1'b0)    // 1-bit set
    );
@@ -195,11 +223,11 @@ module LTC2333_read
    logic reset;
    assign reset = !aresetn_local | cnv;
    logic [6:0] deser_cnt;
-   logic [23:0] deser_data_sr;
+   logic [25:0] deser_data_sr;
    
 
-   logic [23:0] deser_data;
-   assign deser_data = {deser_data_sr[21:0], sdr_data};
+   logic [25:0] deser_data;
+   assign deser_data = {deser_data_sr[23:0], sdr_data};
 
    logic        latch;
    logic        latch_z;
@@ -209,15 +237,15 @@ module LTC2333_read
    
    always @(posedge scko_dly or posedge reset)
    begin
-      deser_data_sr <= deser_data;
-      
       if(reset)
       begin
          deser_cnt <= 0;
          latch <= 0;
+         deser_data_sr <= 0;
       end
       else
       begin
+         deser_data_sr <= deser_data;
          deser_cnt <= deser_cnt + 1;
 
          if(deser_cnt == 'hb) latch <= 1;
@@ -299,7 +327,7 @@ module LTC2333_read
     .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
     .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
     .wr_rst_busy(wr_rst_busy),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
-    .din({8'b0, deser_data}),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
+    .din({8'b0, deser_data[23:0]}),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
     .injectdbiterr(1'b0), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
     .injectsbiterr(1'b0), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
     .rd_clk(FIFO_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free

@@ -40,6 +40,7 @@ module LTC2333_write_impl #(
                          //configuration parameter interface 
                          input             PARAM_T params,
                          input reg         readInProgress,
+                         input wire        resetPending,
                          
                          // inputs
                          input wire        busy,
@@ -89,6 +90,7 @@ module LTC2333_write_impl #(
    end
 
    assign local_aresetn = aresetn && !(!readInProgress && reset_latch);
+   assign resetPending = reset_latch;
 
    //assign data = {2'b10, ctrl_ptr[2:0], params.range};
    //assign busy_delay = BUSY_TIME/CLOCK_PERIOD;

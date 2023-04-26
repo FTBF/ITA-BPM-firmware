@@ -786,6 +786,9 @@
               "BUSY_SIGNAL": {
                 "value": "0"
               },
+              "BUSY_TIME": {
+                "value": "600"
+              },
               "CLOCK_PERIOD": {
                 "value": "30"
               }
@@ -2346,7 +2349,7 @@
             "xci_name": "ITA_BPM_DAQ_axi_to_ipif_mux_0_0",
             "parameters": {
               "BROADCAST_REG": {
-                "value": "1"
+                "value": "5"
               },
               "N_CHIP": {
                 "value": "9"
