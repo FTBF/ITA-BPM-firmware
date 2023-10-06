@@ -182,7 +182,7 @@ module LTC2333_write_impl #(
          case(state)
            RESET:
            begin
-              n_reads_remaining <= params.n_reads;
+              n_reads_remaining <= params.n_reads + 1; // +1 for initial config write which is ignored 
               n_chan_remaining <= n_chan;
               state <= IDLE;
            end

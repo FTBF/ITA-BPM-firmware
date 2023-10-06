@@ -37,6 +37,8 @@ module LTC2333_read
     input logic                                  scko,
     input logic                                  sdo,
 
+    output logic                                 time_we, 
+
     //IPIF interface
     //configuration parameter interface
     input logic                                  IPIF_clk,
@@ -71,14 +73,13 @@ module LTC2333_read
    
    typedef struct       packed{
       // Register 3
-      logic [31:0]      padding3;
+      logic [31:0]      nsum;
       // Register 2
       logic [31:0]      intr_depth;
       // Register 1
       logic [31:0]      fifo_occ;
       // Register 0
-      logic [28:0]      padding0;
-      logic             time_reset;
+      logic [29:0]      padding0;
       logic             enable;
       logic             reset;
    } param_t;
@@ -87,16 +88,14 @@ module LTC2333_read
    param_t params_from_bus;
    param_t params_to_IP;
    param_t params_to_bus;
-   param_t params_overlay;
    
    always_comb begin
       params_from_IP = params_to_IP;
       //More efficient to explicitely zero padding 
-      params_from_IP.padding3   = '0;
       params_from_IP.padding0   = '0;
 
-      params_to_bus = params_overlay;
-      params_to_bus.fifo_occ = FIFO_rd_count;
+      //readback parameters 
+      params_from_IP.fifo_occ = FIFO_rd_count;
    end
    
    IPIF_parameterDecode
@@ -105,7 +104,7 @@ module LTC2333_read
      .N_REG(N_REG),
      .PARAM_T(param_t),
      .DEFAULTS({32'h0, 32'd1, 32'h0, 32'b0}),
-     .SELF_RESET(128'b101)
+     .SELF_RESET(128'b1)
      ) parameterDecoder 
    (
     .clk(IPIF_clk),
@@ -135,7 +134,7 @@ module LTC2333_read
     .params_from_IP(params_from_IP),
     .params_from_bus(params_from_bus),
     .params_to_IP(params_to_IP),
-    .params_to_bus(params_overlay)
+    .params_to_bus(params_to_bus)
     );
 
    assign interrupt = FIFO_rd_count > params_to_IP.intr_depth;
@@ -265,15 +264,6 @@ module LTC2333_read
                         .src_in(latch)      // 1-bit input: Input signal to be synchronized to dest_clk domain.
                         );
 
-   logic [65:0] counter = 0;
-   logic        time_reset_last = 0;
-   always @(posedge clk)
-   begin
-      time_reset_last <= params_to_IP.time_reset; 
-      if(time_reset_last == 1'b0 && params_to_IP.time_reset == 1'b1) counter <= 0;
-      else                                                           counter <= counter + 1;
-   end
-
    always @(posedge clk or negedge aresetn_local)
    begin
       if(!aresetn_local)
@@ -284,8 +274,77 @@ module LTC2333_read
       begin
          latch_z2 <= latch_z;
       end
+   end // always @ (posedge clk or negedge aresetn_local)
+
+   //skip first readback after write note starts
+   logic pastFirstRead;
+   always @(posedge clk or posedge timetrig or negedge aresetn_local)
+   begin
+      if(timetrig || !aresetn_local) pastFirstRead <= 0;
+      else if(latch_pulse)           pastFirstRead <= 1;
    end
-      
+
+   //summing logic.  If nsum == 0, bypass summing logic
+   logic [31:0] sum [8];
+   logic [7:0]  sum_we;
+   generate
+      genvar    iChan;
+      for (iChan = 0; iChan < 8; iChan++)
+      begin
+         logic [31:0] count = 0;
+         always @(posedge clk)
+         begin
+            sum_we[iChan] <= '0;
+            if( count == params_to_IP.nsum )
+            begin
+               count <= '0;
+               sum_we[iChan] <= 1;
+            end
+            else if( params_to_IP.enable && iChan == deser_data[5:3] && pastFirstRead && latch_pulse)
+            begin
+               count <= count + 1;
+               if(count == 0)
+               begin
+                  sum[iChan] <= {8'b0, deser_data[23:0]};
+               end
+               else
+               begin
+                  sum[iChan][31:6] <= sum[iChan][31:6] + {8'b0, deser_data[23:6]};
+               end
+            end
+         end // always @ (posedge clk)
+      end
+   endgenerate
+
+   //FIFO inout mux
+   logic [31:0] fifo_input;
+   logic        fifo_we;
+   always_comb
+   begin
+      if(params_to_IP.nsum == '0)
+      begin
+         fifo_input = {8'b0, deser_data[23:0]};
+         fifo_we = pastFirstRead && latch_pulse;
+      end
+      else
+      begin
+         fifo_we = |sum_we;
+         case(sum_we)
+           8'h01: fifo_input <= sum[0];
+           8'h02: fifo_input <= sum[1];
+           8'h04: fifo_input <= sum[2];
+           8'h08: fifo_input <= sum[3];
+           8'h10: fifo_input <= sum[4];
+           8'h20: fifo_input <= sum[5];
+           8'h40: fifo_input <= sum[6];
+           8'h80: fifo_input <= sum[7];
+           default: fifo_input <= '0;
+         endcase;
+      end
+   end // always_comb
+
+   assign time_we = fifo_we;
+   
    logic empty;
    assign FIFO_notEmpty = !empty;
    xpm_fifo_async 
@@ -327,7 +386,7 @@ module LTC2333_read
     .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
     .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
     .wr_rst_busy(wr_rst_busy),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
-    .din({8'b0, deser_data[23:0]}),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
+    .din(fifo_input),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
     .injectdbiterr(1'b0), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
     .injectsbiterr(1'b0), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
     .rd_clk(FIFO_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free
@@ -335,7 +394,7 @@ module LTC2333_read
     .rst(!aresetn_local),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
     .sleep(1'b0),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
     .wr_clk(clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
-    .wr_en(!FIFO_write_block && params_to_IP.enable && latch_pulse)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
+    .wr_en(!FIFO_write_block && params_to_IP.enable && fifo_we)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
     );
 
 endmodule

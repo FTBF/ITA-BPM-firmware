@@ -32,6 +32,7 @@ module LTCTimer
     input logic                                  aresetn,
 
     input logic                                  cnv,
+    input logic [7:0]                            time_we,
 
     //IPIF interface
     //configuration parameter interface
@@ -67,7 +68,7 @@ module LTCTimer
    
    typedef struct       packed{
       // Register 3
-      logic [31:0]      padding3;
+      logic [31:0]      nsum;
       // Register 2
       logic [31:0]      intr_depth;
       // Register 1
@@ -82,15 +83,13 @@ module LTCTimer
    param_t params_from_bus;
    param_t params_to_IP;
    param_t params_to_bus;
-   param_t params_overlay;
    
    always_comb begin
       params_from_IP = params_to_IP;
       //More efficient to explicitely zero padding 
-      params_from_IP.padding3   = '0;
       params_from_IP.padding0   = '0;
 
-      params_to_bus.fifo_occ = FIFO_rd_count;
+      params_from_IP.fifo_occ = FIFO_rd_count;
    end
    
    IPIF_parameterDecode
@@ -129,7 +128,7 @@ module LTCTimer
     .params_from_IP(params_from_IP),
     .params_from_bus(params_from_bus),
     .params_to_IP(params_to_IP),
-    .params_to_bus(params_overlay)
+    .params_to_bus(params_to_bus)
     );
     
    assign interrupt = FIFO_rd_count > params_to_IP.intr_depth;
@@ -153,6 +152,34 @@ module LTCTimer
    begin
       aresetn_local <= aresetn && !params_to_IP.reset;
    end
+
+   //must buffer the time value to facilitate ADC summing logic
+   logic [65:0] timeBuffer;
+   always @(posedge clk or negedge aresetn_local)
+   begin
+      if(!aresetn_local)  timeBuffer <= '0;
+      else if(time_write) timeBuffer <= counter;
+   end
+   
+   //ensure the timestamp is only written once per event
+   //and only when ADC data is written 
+   logic fifo_we_latch;
+   logic fifo_we_latch_z;
+   logic fifo_we;
+   always @(posedge clk or negedge aresetn_local)
+   begin
+      if(!aresetn_local || cnv)
+      begin
+         fifo_we_latch <= 0;
+         fifo_we_latch_z <= 0;
+      end
+      else
+      begin
+         fifo_we_latch_z <= fifo_we_latch;
+         if(|time_we) fifo_we_latch <= 1;
+      end
+   end // always @ (posedge clk or negedge aresetn_local)
+   assign fifo_we = fifo_we_latch_z == 1'b0 && fifo_we_latch == 1'b1;
 
    logic empty;
    assign FIFO_notEmpty = !empty;
@@ -195,7 +222,7 @@ module LTCTimer
     .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
     .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
     .wr_rst_busy(wr_rst_busy),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
-    .din(counter[64:1]),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
+    .din(timeBuffer[64:1]),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
     .injectdbiterr(1'b0), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
     .injectsbiterr(1'b0), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
     .rd_clk(FIFO_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free
@@ -203,7 +230,7 @@ module LTCTimer
     .rst(!aresetn_local),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
     .sleep(1'b0),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
     .wr_clk(clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
-    .wr_en(!FIFO_write_block && params_to_IP.enable && time_write)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
+    .wr_en(!FIFO_write_block && params_to_IP.enable && fifo_we)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
     );
 
 endmodule

@@ -136,6 +136,7 @@
         "AXI_Full_IPIF_0": "",
         "axi_intc_0": "",
         "xlconcat_1": "",
+        "xlconcat_2": "",
         "LTCTimer_0": ""
       },
       "xlconcat_0": "",
@@ -2349,7 +2350,7 @@
             "xci_name": "ITA_BPM_DAQ_axi_to_ipif_mux_0_0",
             "parameters": {
               "BROADCAST_REG": {
-                "value": "5"
+                "value": "13"
               },
               "N_CHIP": {
                 "value": "9"
@@ -2410,6 +2411,9 @@
               },
               "interrupt": {
                 "type": "intr",
+                "direction": "O"
+              },
+              "time_we": {
                 "direction": "O"
               }
             },
@@ -2490,6 +2494,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -4172,6 +4182,9 @@
               "interrupt": {
                 "type": "intr",
                 "direction": "O"
+              },
+              "time_we": {
+                "direction": "O"
               }
             },
             "components": {
@@ -4269,6 +4282,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -4378,6 +4397,9 @@
               "interrupt": {
                 "type": "intr",
                 "direction": "O"
+              },
+              "time_we": {
+                "direction": "O"
               }
             },
             "components": {
@@ -4475,6 +4497,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -4584,6 +4612,9 @@
               "interrupt": {
                 "type": "intr",
                 "direction": "O"
+              },
+              "time_we": {
+                "direction": "O"
               }
             },
             "components": {
@@ -4681,6 +4712,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -4790,6 +4827,9 @@
               "interrupt": {
                 "type": "intr",
                 "direction": "O"
+              },
+              "time_we": {
+                "direction": "O"
               }
             },
             "components": {
@@ -4887,6 +4927,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -4996,6 +5042,9 @@
               "interrupt": {
                 "type": "intr",
                 "direction": "O"
+              },
+              "time_we": {
+                "direction": "O"
               }
             },
             "components": {
@@ -5093,6 +5142,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -5202,6 +5257,9 @@
               "interrupt": {
                 "type": "intr",
                 "direction": "O"
+              },
+              "time_we": {
+                "direction": "O"
               }
             },
             "components": {
@@ -5299,6 +5357,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -5408,6 +5472,9 @@
               "interrupt": {
                 "type": "intr",
                 "direction": "O"
+              },
+              "time_we": {
+                "direction": "O"
               }
             },
             "components": {
@@ -5505,6 +5572,12 @@
                 "ports": [
                   "LTC2333_read_0/interrupt",
                   "interrupt"
+                ]
+              },
+              "LTC2333_read_0_time_we": {
+                "ports": [
+                  "LTC2333_read_0/time_we",
+                  "time_we"
                 ]
               },
               "LTC2333_write_0_cnv": {
@@ -5632,6 +5705,15 @@
             "parameters": {
               "NUM_PORTS": {
                 "value": "9"
+              }
+            }
+          },
+          "xlconcat_2": {
+            "vlnv": "xilinx.com:ip:xlconcat:2.1",
+            "xci_name": "ITA_BPM_DAQ_xlconcat_0_2",
+            "parameters": {
+              "NUM_PORTS": {
+                "value": "8"
               }
             }
           },
@@ -5825,6 +5907,12 @@
               "xlconcat_1/In6"
             ]
           },
+          "LTC233_read_block_0_time_we": {
+            "ports": [
+              "LTC233_read_block_0/time_we",
+              "xlconcat_2/In6"
+            ]
+          },
           "LTC233_read_block_1_FIFO_full": {
             "ports": [
               "LTC233_read_block_1/FIFO_full",
@@ -5835,6 +5923,12 @@
             "ports": [
               "LTC233_read_block_1/interrupt",
               "xlconcat_1/In0"
+            ]
+          },
+          "LTC233_read_block_1_time_we": {
+            "ports": [
+              "LTC233_read_block_1/time_we",
+              "xlconcat_2/In0"
             ]
           },
           "LTC233_read_block_2_FIFO_full": {
@@ -5849,6 +5943,12 @@
               "xlconcat_1/In2"
             ]
           },
+          "LTC233_read_block_2_time_we": {
+            "ports": [
+              "LTC233_read_block_2/time_we",
+              "xlconcat_2/In1"
+            ]
+          },
           "LTC233_read_block_3_FIFO_full": {
             "ports": [
               "LTC233_read_block_3/FIFO_full",
@@ -5859,6 +5959,12 @@
             "ports": [
               "LTC233_read_block_3/interrupt",
               "xlconcat_1/In1"
+            ]
+          },
+          "LTC233_read_block_3_time_we": {
+            "ports": [
+              "LTC233_read_block_3/time_we",
+              "xlconcat_2/In2"
             ]
           },
           "LTC233_read_block_4_FIFO_full": {
@@ -5873,6 +5979,12 @@
               "xlconcat_1/In3"
             ]
           },
+          "LTC233_read_block_4_time_we": {
+            "ports": [
+              "LTC233_read_block_4/time_we",
+              "xlconcat_2/In5"
+            ]
+          },
           "LTC233_read_block_5_FIFO_full": {
             "ports": [
               "LTC233_read_block_5/FIFO_full",
@@ -5883,6 +5995,12 @@
             "ports": [
               "LTC233_read_block_5/interrupt",
               "xlconcat_1/In4"
+            ]
+          },
+          "LTC233_read_block_5_time_we": {
+            "ports": [
+              "LTC233_read_block_5/time_we",
+              "xlconcat_2/In3"
             ]
           },
           "LTC233_read_block_6_FIFO_full": {
@@ -5897,6 +6015,12 @@
               "xlconcat_1/In5"
             ]
           },
+          "LTC233_read_block_6_time_we": {
+            "ports": [
+              "LTC233_read_block_6/time_we",
+              "xlconcat_2/In4"
+            ]
+          },
           "LTC233_read_block_7_FIFO_full": {
             "ports": [
               "LTC233_read_block_7/FIFO_full",
@@ -5907,6 +6031,12 @@
             "ports": [
               "LTC233_read_block_7/interrupt",
               "xlconcat_1/In7"
+            ]
+          },
+          "LTC233_read_block_7_time_we": {
+            "ports": [
+              "LTC233_read_block_7/time_we",
+              "xlconcat_2/In7"
             ]
           },
           "LTCTimer_0_FIFO_full": {
@@ -6087,6 +6217,12 @@
             "ports": [
               "xlconcat_1/dout",
               "axi_intc_0/intr"
+            ]
+          },
+          "xlconcat_2_dout": {
+            "ports": [
+              "xlconcat_2/dout",
+              "LTCTimer_0/time_we"
             ]
           }
         }

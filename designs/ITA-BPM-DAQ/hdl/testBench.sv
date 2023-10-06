@@ -110,11 +110,8 @@ ITA_BPM_DAQ_wrapper dut
     SDO_P);
 
    logic [7:0] scko;
-   always
-   begin
-    SCKO_P = #10 scko;
-    SCKO_N = #10 ~scko;
-   end
+   assign SCKO_P = scko;
+   assign SCKO_N = ~scko;
    logic [7:0] sdo;
    assign SDO_P = sdo;
    assign SDO_N = ~sdo;
@@ -158,17 +155,18 @@ ITA_BPM_DAQ_wrapper dut
       
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h41200000,4, 32'hFFFFFFFF, resp);
 
-      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c1000c,4, 32'h00000010, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c1000c,4, 32'h00000011, resp);
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10004,4, 32'h000200ff, resp);
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c00008,4, 32'h00000008, resp);
+      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c0000C,4, 32'h00000004, resp);
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c00000,4, 32'h00000002, resp);
       //testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
       #200000;
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
-      #2000;
-      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
-      #2000;
-      testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
+      //#2000;
+      //testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
+      //#2000;
+      //testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.write_data(32'h43c10000,4, 32'h00000001, resp);
 
       testBench.dut.ITA_BPM_DAQ_i.processing_system7_0.inst.read_data(32'h43c00000+4*1+16*0,4,read_data,resp);
       $display("read_data:", read_data);

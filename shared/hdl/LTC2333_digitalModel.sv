@@ -36,6 +36,15 @@ module LTC2333_digitalModel #(
      begin
         #10 internal_clk <= ~internal_clk;        
      end
+     
+   logic  internal_clk2 = 0;
+   always
+     begin
+        #1 internal_clk2 <= ~internal_clk2;        
+     end
+    
+    logic scko_l = 0;
+    always @(posedge internal_clk2) scko <= scko_l;
 
    logic [7:0] busy_count = 25;
    always @(posedge internal_clk)
@@ -141,7 +150,7 @@ module LTC2333_digitalModel #(
           end
         else
           begin
-             scko <= !scko;
+             scko_l <= !scko_l;
         
              if(output_bit_cnt > 0) output_bit_cnt <= output_bit_cnt - 1;
              else                   output_bit_cnt <= 23;
