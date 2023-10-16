@@ -44,7 +44,14 @@ module LTC2333_digitalModel #(
      end
     
     logic scko_l = 0;
-    always @(posedge internal_clk2) scko <= scko_l;
+    logic [7:0] scko_sr = 0;
+    always @(posedge internal_clk2)
+    begin
+        scko_sr[0] <= scko_l;
+        scko_sr[7:1] <= scko_sr[6:0];
+        scko <= scko_sr[7];
+    end
+       
 
    logic [7:0] busy_count = 25;
    always @(posedge internal_clk)
@@ -142,7 +149,7 @@ module LTC2333_digitalModel #(
      begin
         if(busy)
           begin
-             scko <= 0;
+             scko_l <= 0;
              output_bit_cnt <= 23;
              if(change) cmd_ptr = 0;
              else       cmd_ptr = next_cmd_ptr;

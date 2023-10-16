@@ -103,8 +103,6 @@ module LTC2333_write #(
       params_from_IP.resetPending = resetPending;
    end
 
-   assign timetrig = params_to_IP.reset;
-   
    IPIF_parameterDecode#(
                          .C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),
                          .N_REG(N_REG),
@@ -167,7 +165,8 @@ module LTC2333_write #(
                           // outputs
                           .cnv(cnv),
                           .scki(scki),
-                          .sdi(sdi)
+                          .sdi(sdi),
+                          .reset_out(timetrig)
                           );
 
    

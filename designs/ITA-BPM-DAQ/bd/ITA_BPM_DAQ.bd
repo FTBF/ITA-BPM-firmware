@@ -5710,7 +5710,7 @@
           },
           "xlconcat_2": {
             "vlnv": "xilinx.com:ip:xlconcat:2.1",
-            "xci_name": "ITA_BPM_DAQ_xlconcat_0_2",
+            "xci_name": "ITA_BPM_DAQ_xlconcat_2_1",
             "parameters": {
               "NUM_PORTS": {
                 "value": "8"

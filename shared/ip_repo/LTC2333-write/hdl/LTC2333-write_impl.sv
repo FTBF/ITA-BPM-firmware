@@ -38,9 +38,9 @@ module LTC2333_write_impl #(
                                                                       
                          //IPIF interface
                          //configuration parameter interface 
-                         input             PARAM_T params,
+                         input PARAM_T     params,
                          input reg         readInProgress,
-                         input wire        resetPending,
+                         output wire       resetPending,
                          
                          // inputs
                          input wire        busy,
@@ -48,7 +48,8 @@ module LTC2333_write_impl #(
                          // outputs
                          output reg        cnv,
                          output wire [1:0] scki,
-                         output reg [1:0]  sdi
+                         output reg [1:0]  sdi,
+                         output wire       reset_out
                          );
 
 
@@ -75,6 +76,8 @@ module LTC2333_write_impl #(
    logic        reset_latch = 0;
    logic        reset_last = 0;
    logic [1:0]  sdi_ddr;
+   logic        mode_z;
+   logic        mode_pulse;       
 
    always @(posedge clk)
    begin
@@ -87,9 +90,13 @@ module LTC2333_write_impl #(
       begin
          reset_latch <= 1;
       end
-   end
+   end // always @ (posedge clk)
 
-   assign local_aresetn = aresetn && !(!readInProgress && reset_latch);
+   always @(posedge clk) mode_z <= params.mode;
+   assign mode_pulse = params.mode == 1'b1 && mode_z == 1'b0;
+   
+   assign local_aresetn = aresetn && (readInProgress || !reset_latch) && !mode_pulse;
+   assign reset_out = !local_aresetn;
    assign resetPending = reset_latch;
 
    //assign data = {2'b10, ctrl_ptr[2:0], params.range};

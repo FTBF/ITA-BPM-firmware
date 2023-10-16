@@ -222,7 +222,7 @@ module LTCTimer
     .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
     .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
     .wr_rst_busy(wr_rst_busy),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
-    .din(timeBuffer[64:1]),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
+    .din(timeBuffer[63:0]),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
     .injectdbiterr(1'b0), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
     .injectsbiterr(1'b0), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
     .rd_clk(FIFO_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free

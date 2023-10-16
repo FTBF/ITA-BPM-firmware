@@ -285,6 +285,8 @@ module LTC2333_read
    end
 
    //summing logic.  If nsum == 0, bypass summing logic
+   logic [31:0] deser_data_extended;
+   assign deser_data_extended = { deser_data[23]?8'hff:8'h0, deser_data[23:0]};
    logic [31:0] sum [8];
    logic [7:0]  sum_we;
    generate
@@ -292,25 +294,38 @@ module LTC2333_read
       for (iChan = 0; iChan < 8; iChan++)
       begin
          logic [31:0] count = 0;
-         always @(posedge clk)
+         always @(posedge clk or negedge aresetn_local)
          begin
             sum_we[iChan] <= '0;
-            if( count == params_to_IP.nsum )
+            if(!aresetn_local)
             begin
-               count <= '0;
-               sum_we[iChan] <= 1;
+               sum[iChan] <= 0;
+               count <= 0;
             end
-            else if( params_to_IP.enable && iChan == deser_data[5:3] && pastFirstRead && latch_pulse)
+            else
             begin
-               count <= count + 1;
-               if(count == 0)
+               if( params_to_IP.nsum == 0 )
                begin
-                  sum[iChan] <= {8'b0, deser_data[23:0]};
+                  count <= '0;
+                  sum_we[iChan] <= 0;
                end
-               else
+               else if( count == params_to_IP.nsum )
                begin
-                  sum[iChan][31:6] <= sum[iChan][31:6] + {8'b0, deser_data[23:6]};
+                  count <= '0;
+                  sum_we[iChan] <= 1;
                end
+               else if( params_to_IP.enable && iChan == deser_data_extended[5:3] && pastFirstRead && latch_pulse)
+               begin
+                  count <= count + 1;
+                  if(count == 0)
+                  begin
+                     sum[iChan] <= deser_data_extended;
+                  end
+                  else
+                  begin
+                     sum[iChan][31:6] <= sum[iChan][31:6] + deser_data_extended[31:6];
+                  end
+               end // if ( params_to_IP.enable && iChan == deser_data[5:3] && pastFirstRead && latch_pulse)
             end
          end // always @ (posedge clk)
       end
@@ -323,7 +338,7 @@ module LTC2333_read
    begin
       if(params_to_IP.nsum == '0)
       begin
-         fifo_input = {8'b0, deser_data[23:0]};
+         fifo_input = deser_data_extended;
          fifo_we = pastFirstRead && latch_pulse;
       end
       else
