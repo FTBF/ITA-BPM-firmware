@@ -37,10 +37,10 @@ The vivado project is not stored directly in this repo.  Instead the project is 
 pip install -r requirements.txt
 ```
 
-In addition to python3 you will need Vivado 2019.2 sourced in your PATH.
+In addition to python3 you will need Vivado 2021.1 sourced in your PATH.
 
 ```
-source [install path]/Xilinx/Vivado/2019.2/settings64.sh
+source [install path]/Xilinx/Vivado/2021.1/settings64.sh
 ```
 
 ### Creating Vivado project after checkout
@@ -56,8 +56,8 @@ Create a specific project
 ```
 ./project create [project name]
 ```
-
-build a project (bit file and device tree overlay)
+This will create a the specified project in a folder called `[project name]`.  The project xpr file can be opened and editedin Vivado as usual.  The project file should NEVER be committed to git.  
+To build a project from the command line (bit file and device tree overlay)
 ```
 ./project build [project name]
 ```
@@ -239,7 +239,7 @@ network:
 
 ### Incantation to convert firmware bit file to bin file 
 
-The ZYNQ-7000 cannot be programmed director from the bit file, it must first be converted to a bin file.  
+The ZYNQ-7000 cannot be programmed directly from the bit file, it must first be converted to a bin file.  
 
 ```bootgen -image create.bif -arch zynq -o ./diode_BPM.bit.bin -w -process_bitstream bin```
 
@@ -251,7 +251,7 @@ all:
 }
 ```
 
-### Loading PL firmware
+### Manually loading PL firmware
 
 `fpgautil` can be used to load the firmware into the PL after the bit file is converted to a bin file.  A copy of fpgautil can be found [here](https://github.com/Xilinx/meta-xilinx-tools/blob/master/recipes-bsp/fpga-manager-script/files/fpgautil.c).  To fully load the firmware you will need the converted bin file and the compiled device tree overlay (dtbo) file.  The firmware is then loaded with the following incantation
 
